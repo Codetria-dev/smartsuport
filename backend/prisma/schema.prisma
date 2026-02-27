@@ -188,7 +188,7 @@ model Subscription {
 
 model AIConfiguration {
   id              String    @id @default(cuid())
-  userId          String
+  userId          String    @unique
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   // Configurações de IA

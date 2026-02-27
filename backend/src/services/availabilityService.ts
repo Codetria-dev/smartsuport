@@ -29,10 +29,18 @@ export class AvailabilityService {
 
     return prisma.availability.create({
       data: {
-        ...data,
-        providerId,
+        provider: { connect: { id: providerId } },
+        dayOfWeek: data.dayOfWeek,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        isRecurring: data.isRecurring ?? true,
         startDate: data.startDate ? new Date(data.startDate) : null,
         endDate: data.endDate ? new Date(data.endDate) : null,
+        timezone: data.timezone ?? 'America/Sao_Paulo',
+        slotDuration: data.slotDuration ?? 30,
+        bufferTime: data.bufferTime ?? 0,
+        maxBookingsPerSlot: data.maxBookingsPerSlot ?? 1,
+        isActive: data.isActive ?? true,
       },
     });
   }
@@ -135,7 +143,7 @@ export class AvailabilityService {
     for (const dayOfWeek of daysOfWeek) {
       await prisma.availability.create({
         data: {
-          providerId,
+          provider: { connect: { id: providerId } },
           dayOfWeek,
           ...defaultData,
         },

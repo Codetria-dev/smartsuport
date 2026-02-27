@@ -21,7 +21,7 @@ export class AIService {
    * Obtém ou cria configuração de IA do usuário
    */
   async getOrCreateConfig(userId: string) {
-    let config = await prisma.aIConfiguration.findFirst({
+    let config = await prisma.aIConfiguration.findUnique({
       where: { userId },
     });
 
