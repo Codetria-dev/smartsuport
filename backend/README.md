@@ -12,8 +12,7 @@ This service provides authentication, appointment management, availability confi
 - Express
 - TypeScript
 - Prisma ORM
-- SQLite (development)
-- PostgreSQL (production ready)
+- PostgreSQL
 - JWT Authentication
 - Bcrypt
 - Zod Validation
@@ -24,7 +23,7 @@ This service provides authentication, appointment management, availability confi
 
 - Node.js 18+
 - npm or yarn
-- No external database is required for development. SQLite is used by default.
+- PostgreSQL (local, Docker, or hosted e.g. Railway). Set `DATABASE_URL` in `.env`.
 
 ---
 
@@ -52,13 +51,13 @@ Generate Prisma Client:
 npm run prisma:generate
 ```
 
-Run migrations:
+Run migrations (uses `DATABASE_URL` from `.env`):
 
 ```bash
 npm run prisma:migrate
 ```
 
-This will create: `prisma/dev.db`
+For production deploy (e.g. Railway), run: `npx prisma migrate deploy`
 
 ---
 
@@ -155,7 +154,8 @@ router.get(
 **Required**
 
 ```env
-DATABASE_URL="file:./dev.db"
+# PostgreSQL URL from your provider (e.g. Railway Connect tab). Do not commit real credentials.
+DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
 JWT_SECRET="your-secret"
 JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
 JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
