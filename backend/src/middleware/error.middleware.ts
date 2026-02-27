@@ -20,17 +20,17 @@ export function errorHandler(
       body: req.body,
     });
 
-    return res.status(400).json({
+    res.status(400).json({
       error: 'Invalid JSON',
       message: 'O corpo da requisição contém JSON inválido',
       details: err.message,
     });
+    return;
   }
 
-  const statusCode = (err as AppError).statusCode || 500;
+  const statusCode = (err as AppError).statusCode ?? (err as { status?: number }).status ?? 500;
   const message = err.message || 'Internal server error';
 
-  // Log do erro
   console.error('Error:', {
     message: err.message,
     stack: env.NODE_ENV === 'development' ? err.stack : undefined,
@@ -41,7 +41,7 @@ export function errorHandler(
 
   res.status(statusCode).json({
     error: message,
-    ...(env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(env.NODE_ENV === 'development' && err.stack && { stack: err.stack }),
   });
 }
 

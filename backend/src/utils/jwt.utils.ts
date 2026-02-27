@@ -11,34 +11,32 @@ export interface JWTPayload {
 
 export interface RefreshTokenPayload {
   userId: string;
-  jti?: string;  // JWT ID – usado para revogação no BD
+  jti?: string; // JWT ID – used for revocation in DB
 }
 
 /**
- * Gera um access token JWT
+ * Generate JWT access token
  */
 export function generateAccessToken(payload: JWTPayload): string {
-  return jwt.sign(payload, jwtConfig.secret, {
-    expiresIn: jwtConfig.accessTokenExpiresIn,
-  });
+  const options: jwt.SignOptions = {
+    expiresIn: jwtConfig.accessTokenExpiresIn as jwt.SignOptions['expiresIn'],
+  };
+  return jwt.sign(payload, jwtConfig.secret, options);
 }
 
 /**
- * Gera um refresh token JWT com jti (para revogação no BD)
+ * Generate JWT refresh token with jti (for DB revocation)
  */
 export function generateRefreshToken(payload: RefreshTokenPayload, jti: string): string {
-  return jwt.sign(
-    { userId: payload.userId },
-    jwtConfig.secret,
-    {
-      expiresIn: jwtConfig.refreshTokenExpiresIn,
-      jwtid: jti,
-    }
-  );
+  const options: jwt.SignOptions = {
+    expiresIn: jwtConfig.refreshTokenExpiresIn as jwt.SignOptions['expiresIn'],
+    jwtid: jti,
+  };
+  return jwt.sign({ userId: payload.userId }, jwtConfig.secret, options);
 }
 
 /**
- * Verifica e decodifica um access token
+ * Verify and decode access token
  */
 export function verifyAccessToken(token: string): JWTPayload {
   try {
@@ -55,7 +53,7 @@ export function verifyAccessToken(token: string): JWTPayload {
 }
 
 /**
- * Verifica e decodifica um refresh token
+ * Verify and decode refresh token
  */
 export function verifyRefreshToken(token: string): RefreshTokenPayload {
   try {
@@ -72,7 +70,7 @@ export function verifyRefreshToken(token: string): RefreshTokenPayload {
 }
 
 /**
- * Decodifica um token sem verificar (útil para debug)
+ * Decode token without verifying (debug only)
  */
 export function decodeToken(token: string): jwt.JwtPayload | null {
   return jwt.decode(token) as jwt.JwtPayload | null;
