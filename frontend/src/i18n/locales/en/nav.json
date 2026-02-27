@@ -1,0 +1,13 @@
+{
+  "dashboard": "Dashboard",
+  "agenda": "Agenda",
+  "registerClient": "Register client",
+  "clients": "Clients",
+  "availability": "Availability",
+  "plans": "Plans",
+  "adminDashboard": "Admin Dashboard",
+  "adminUsers": "Admin Users",
+  "account": "Account",
+  "profile": "Profile",
+  "settings": "Settings"
+}

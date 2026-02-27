@@ -1,0 +1,15 @@
+{
+  "ai": "AI Settings",
+  "apiKey": "API Key",
+  "model": "Model",
+  "autoReply": "Auto reply",
+  "suggestSlots": "Suggest slots",
+  "profileActive": "Active Profile",
+  "profileActiveDesc": "When disabled you won't receive bookings.",
+  "managePreferences": "Manage your account preferences",
+  "planDesc": "Manage subscription and billing",
+  "profileDesc": "Edit personal information",
+  "updateError": "Error updating settings",
+  "profileActivated": "Profile activated.",
+  "profileDeactivated": "Profile disabled for new bookings."
+}

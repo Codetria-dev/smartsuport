@@ -1,0 +1,19 @@
+{
+  "welcomeTitle": "Você deseja ?",
+  "welcomeBookOption": "Agendar um horário",
+  "welcomeProOption": "Criar uma conta profissional",
+  "selectProvider": "Escolha um Profissional",
+  "selectProviderSubtitle": "Selecione o profissional para agendar um horário",
+  "backToHome": "Voltar",
+  "backToWelcome": "Voltar",
+  "loadingProviders": "Carregando profissionais...",
+  "errorLoadingProviders": "Erro ao carregar profissionais",
+  "noProviders": "Nenhum profissional disponível",
+  "agendar": "Agendar",
+  "consultar": "Consultar",
+  "confirmTitle": "Confirmação de agendamento",
+  "consultTitle": "Consultar agendamento",
+  "bookSlot": "Agendar Horário",
+  "noProvidersMessage": "Não há profissionais disponíveis no momento.",
+  "noProfileDescription": "Profissional disponível para agendamentos."
+}

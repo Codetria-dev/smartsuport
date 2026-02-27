@@ -1,0 +1,19 @@
+{
+  "welcomeTitle": "What would you like to do?",
+  "welcomeBookOption": "Book your appointment",
+  "welcomeProOption": "Create professional account",
+  "selectProvider": "Choose a Professional",
+  "selectProviderSubtitle": "Select the professional to book your appointment",
+  "backToHome": "Back to Home",
+  "backToWelcome": "Back",
+  "loadingProviders": "Loading professionals...",
+  "errorLoadingProviders": "Error loading professionals",
+  "noProviders": "No professionals available",
+  "agendar": "Book",
+  "consultar": "Consult",
+  "confirmTitle": "Appointment confirmation",
+  "consultTitle": "Consult appointment",
+  "bookSlot": "Book Appointment",
+  "noProvidersMessage": "No professionals available at the moment.",
+  "noProfileDescription": "Professional available for bookings."
+}

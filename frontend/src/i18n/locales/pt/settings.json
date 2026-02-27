@@ -1,0 +1,15 @@
+{
+  "ai": "Configurações de IA",
+  "apiKey": "Chave da API",
+  "model": "Modelo",
+  "autoReply": "Resposta automática",
+  "suggestSlots": "Sugerir horários",
+  "profileActive": "Perfil ativo",
+  "profileActiveDesc": "Quando desativado você não receberá novos agendamentos.",
+  "managePreferences": "Gerencie as preferências da sua conta",
+  "planDesc": "Assinatura e faturamento",
+  "profileDesc": "Editar dados pessoais",
+  "updateError": "Erro ao atualizar configuração",
+  "profileActivated": "Perfil ativado.",
+  "profileDeactivated": "Perfil desativado para novos agendamentos."
+}
