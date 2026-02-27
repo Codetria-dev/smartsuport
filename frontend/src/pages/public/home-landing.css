@@ -1,0 +1,67 @@
+/* Fallback: espaçamento da landing se Tailwind não aplicar */
+[data-landing="true"] section:first-of-type > div {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+[data-landing="true"] section:nth-of-type(2) > div {
+  margin-top: 4rem;
+}
+[data-landing="true"] section:nth-of-type(2) {
+  padding-bottom: 4rem;
+}
+[data-landing="true"] section:nth-of-type(3),
+[data-landing="true"] section:nth-of-type(4),
+[data-landing="true"] section:nth-of-type(5),
+[data-landing="true"] section:nth-of-type(6) {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+footer.mt-20 {
+  margin-top: 5rem;
+}
+
+/* Espaços entre subtítulo e botões, e entre os botões */
+[data-landing="true"] .landing-hero-subtitle {
+  margin-bottom: 2rem;
+}
+[data-landing="true"] .landing-hero-ctas {
+  margin-top: 2rem;
+  gap: 1.5rem;
+}
+[data-landing="true"] .landing-cta-subtitle {
+  margin-bottom: 2rem;
+}
+[data-landing="true"] .landing-cta-buttons {
+  margin-top: 2rem;
+  gap: 1.5rem;
+}
+
+/* Botões da landing — estilos fixos para garantir aparência */
+[data-landing="true"] .btn-landing-primary {
+  background-color: #f97316;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+[data-landing="true"] .btn-landing-primary:hover {
+  background-color: #ea580c;
+}
+
+[data-landing="true"] .btn-landing-secondary {
+  border: 1px solid #d1d5db;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  color: #111827;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+}
+[data-landing="true"] .btn-landing-secondary:hover {
+  background-color: #f9fafb;
+}
