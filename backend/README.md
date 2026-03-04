@@ -57,7 +57,14 @@ Run migrations (uses `DATABASE_URL` from `.env`):
 npm run prisma:migrate
 ```
 
-For production deploy (e.g. Railway), run: `npx prisma migrate deploy`
+**Deploy (produção)**  
+No ambiente de deploy (Railway, Render, etc.) defina a variável `DATABASE_URL` com a URL real do PostgreSQL (não use placeholders). No build ou pre-deploy, rode:
+
+```bash
+npm run prisma:deploy
+```
+
+Isso executa `prisma generate` e `prisma migrate deploy`. Se preferir só as migrations: `npx prisma migrate deploy`
 
 ---
 

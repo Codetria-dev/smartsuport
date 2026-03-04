@@ -28,5 +28,5 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Prisma
-prisma/migrations/
+# Prisma (migrations devem ser versionadas para deploy)
+# prisma/migrations/ - não ignorar
