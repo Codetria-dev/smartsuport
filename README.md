@@ -247,7 +247,7 @@ Frontend runs at: **http://localhost:5173**
 **Required**
 
 ```env
-# Banco: no Railway é injetado ao linkar o Postgres. Local: defina no backend/.env a URL do PostgreSQL.
+# URL do PostgreSQL. Produção: variável do host. Local: defina no backend/.env.
 JWT_SECRET="your-secret"
 JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
 JWT_REFRESH_TOKEN_EXPIRES_IN="7d"

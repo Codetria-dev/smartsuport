@@ -23,7 +23,7 @@ This service provides authentication, appointment management, availability confi
 
 - Node.js 18+
 - npm or yarn
-- PostgreSQL (local, Docker, or hosted e.g. Railway). No Railway a conexão é injetada ao linkar o Postgres; localmente defina a URL do banco no `.env`.
+- PostgreSQL (local ou hospedado). Defina a URL do banco no `.env` (local) ou via variáveis do host (produção).
 
 ---
 
@@ -58,12 +58,7 @@ npm run prisma:migrate
 ```
 
 **Deploy (produção)**  
-No Railway a URL do banco é injetada ao linkar o Postgres. Não é necessário predeploy: o comando `npm start` já roda `prisma generate`, `prisma migrate deploy` e inicia o servidor. As migrations são aplicadas automaticamente quando o deploy sobe.
-
-**Erro P1000 (Authentication failed) no Railway**  
-O `npm start` já prefere `DATABASE_PUBLIC_URL` quando existir (evita falha de auth na URL interna). Se ainda der P1000:  
-1. No serviço **backend**, em Variables, adicione uma variável **`DATABASE_PUBLIC_URL`** com o valor da URL **pública** do Postgres (no serviço Postgres → Connect → "Public network" / copiar a URL). O start usa essa URL em vez da interna.  
-2. Ou: no serviço Postgres → Variables → Credentials → **Regenerate password**; depois, no backend, use de novo **Add Reference** ao Postgres para atualizar a URL injetada.
+Linke o Postgres ao serviço (Add Reference) para injetar a URL do banco. O `npm start` apenas inicia o servidor (`node dist/server.js`). Migrations: rode manualmente quando precisar (`npx prisma migrate deploy`).
 
 ---
 
@@ -160,7 +155,7 @@ router.get(
 **Required**
 
 ```env
-# Banco: no Railway é injetado ao linkar o Postgres. Local: defina no .env a URL do PostgreSQL.
+# URL do PostgreSQL. Produção: definida ao linkar o Postgres. Local: defina no .env.
 JWT_SECRET="your-secret"
 JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
 JWT_REFRESH_TOKEN_EXPIRES_IN="7d"

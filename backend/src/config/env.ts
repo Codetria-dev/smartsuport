@@ -2,11 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Railway: ao linkar o Postgres, pode injetar DATABASE_PRIVATE_URL; Prisma usa DATABASE_URL
-if (!process.env.DATABASE_URL && process.env.DATABASE_PRIVATE_URL) {
-  process.env.DATABASE_URL = process.env.DATABASE_PRIVATE_URL;
-}
-
 interface EnvConfig {
   NODE_ENV: string;
   PORT: number;
@@ -39,9 +34,8 @@ function validateEnv(): EnvConfig {
     'JWT_REFRESH_TOKEN_EXPIRES_IN',
   ];
 
-  const dbUrl = process.env.DATABASE_URL;
   const missingVars = requiredEnvVars.filter(
-    (varName) => (varName === 'DATABASE_URL' ? !dbUrl : !process.env[varName])
+    (varName) => !process.env[varName]
   );
 
   if (missingVars.length > 0) {
