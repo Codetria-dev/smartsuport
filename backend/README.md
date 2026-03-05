@@ -23,7 +23,7 @@ This service provides authentication, appointment management, availability confi
 
 - Node.js 18+
 - npm or yarn
-- PostgreSQL (local, Docker, or hosted e.g. Railway). Set `DATABASE_URL` in `.env`.
+- PostgreSQL (local, Docker, or hosted e.g. Railway). No Railway a conexão é injetada ao linkar o Postgres; localmente defina a URL do banco no `.env`.
 
 ---
 
@@ -51,20 +51,19 @@ Generate Prisma Client:
 npm run prisma:generate
 ```
 
-Run migrations (uses `DATABASE_URL` from `.env`):
+Run migrations (usa a URL do banco definida no `.env`):
 
 ```bash
 npm run prisma:migrate
 ```
 
 **Deploy (produção)**  
-No ambiente de deploy (Railway, Render, etc.) defina a variável `DATABASE_URL` com a URL real do PostgreSQL (não use placeholders). No build ou pre-deploy, rode:
+No Railway a URL do banco é injetada ao linkar o Postgres. Não é necessário predeploy: o comando `npm start` já roda `prisma generate`, `prisma migrate deploy` e inicia o servidor. As migrations são aplicadas automaticamente quando o deploy sobe.
 
-```bash
-npm run prisma:deploy
-```
-
-Isso executa `prisma generate` e `prisma migrate deploy`. Se preferir só as migrations: `npx prisma migrate deploy`
+**Erro P1000 (Authentication failed) no Railway**  
+1. **Use a injeção automática:** No projeto do backend, em Variables, **não defina** a variável de conexão manualmente. Em vez disso, linke o serviço Postgres (Add Reference → Postgres). O Railway vai injetar a URL correta.  
+2. **Se já tiver variável manual:** Apague a variável de conexão que você criou no backend e adicione a referência ao Postgres (Add Reference) para o Railway preencher sozinho.  
+3. **Senha desatualizada:** No serviço Postgres do Railway, abra Variables → Credentials → **Regenerate password**. Copie a nova URL e, no backend, defina só essa URL na variável de conexão (ou use de novo Add Reference para o Postgres).
 
 ---
 
@@ -161,8 +160,7 @@ router.get(
 **Required**
 
 ```env
-# PostgreSQL URL from your provider (e.g. Railway Connect tab). Do not commit real credentials.
-DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
+# Banco: no Railway é injetado ao linkar o Postgres. Local: defina no .env a URL do PostgreSQL.
 JWT_SECRET="your-secret"
 JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
 JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
