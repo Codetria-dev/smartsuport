@@ -61,9 +61,9 @@ npm run prisma:migrate
 No Railway a URL do banco é injetada ao linkar o Postgres. Não é necessário predeploy: o comando `npm start` já roda `prisma generate`, `prisma migrate deploy` e inicia o servidor. As migrations são aplicadas automaticamente quando o deploy sobe.
 
 **Erro P1000 (Authentication failed) no Railway**  
-1. **Use a injeção automática:** No projeto do backend, em Variables, **não defina** a variável de conexão manualmente. Em vez disso, linke o serviço Postgres (Add Reference → Postgres). O Railway vai injetar a URL correta.  
-2. **Se já tiver variável manual:** Apague a variável de conexão que você criou no backend e adicione a referência ao Postgres (Add Reference) para o Railway preencher sozinho.  
-3. **Senha desatualizada:** No serviço Postgres do Railway, abra Variables → Credentials → **Regenerate password**. Copie a nova URL e, no backend, defina só essa URL na variável de conexão (ou use de novo Add Reference para o Postgres).
+O `npm start` já prefere `DATABASE_PUBLIC_URL` quando existir (evita falha de auth na URL interna). Se ainda der P1000:  
+1. No serviço **backend**, em Variables, adicione uma variável **`DATABASE_PUBLIC_URL`** com o valor da URL **pública** do Postgres (no serviço Postgres → Connect → "Public network" / copiar a URL). O start usa essa URL em vez da interna.  
+2. Ou: no serviço Postgres → Variables → Credentials → **Regenerate password**; depois, no backend, use de novo **Add Reference** ao Postgres para atualizar a URL injetada.
 
 ---
 
