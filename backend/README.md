@@ -156,6 +156,7 @@ router.get(
 
 ```env
 # URL do PostgreSQL. Produção: definida ao linkar o Postgres. Local: defina no .env.
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB?schema=public"
 JWT_SECRET="your-secret"
 JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
 JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
@@ -164,11 +165,25 @@ JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
 **Optional**
 
 ```env
+ # CORS/Front-end (ajuste para o seu domínio)
+ CORS_ORIGIN="http://localhost:5173"
+ FRONTEND_URL="http://localhost:5173"
+
+ # Stripe (billing)
 STRIPE_SECRET_KEY=
+ STRIPE_WEBHOOK_SECRET=
+ STRIPE_SMART_PRICE_ID=
+ STRIPE_PRO_PRICE_ID=
+
+ # OpenAI (AI features)
+ OPENAI_API_KEY=
+
+ # Email (SMTP)
 SMTP_HOST=
+ SMTP_PORT=587
 SMTP_USER=
 SMTP_PASS=
-OPENAI_API_KEY=
+ SMTP_FROM=
 ```
 
 ---
@@ -181,7 +196,8 @@ OPENAI_API_KEY=
 | `npm run build` | Build TypeScript |
 | `npm start` | Production server |
 | `npm run prisma:generate` | Generate Prisma client |
-| `npm run prisma:migrate` | Run migrations |
+| `npm run prisma:migrate` | Run migrations (dev) |
+| `npm run prisma:migrate:deploy` | Run migrations (production) |
 | `npm run prisma:studio` | Open Prisma Studio |
 
 ---

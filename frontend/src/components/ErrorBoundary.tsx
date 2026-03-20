@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-gray-600 mb-6">
               {i18n.t('common:unexpectedError')}
             </p>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded text-left">
                 <p className="text-sm font-mono text-red-800 break-all">
                   {this.state.error.toString()}

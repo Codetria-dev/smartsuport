@@ -248,6 +248,8 @@ Frontend runs at: **http://localhost:5173**
 
 ```env
 # URL do PostgreSQL. Produção: variável do host. Local: defina no backend/.env.
+# Exemplo (ajuste para o seu ambiente)
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB?schema=public"
 JWT_SECRET="your-secret"
 JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
 JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
@@ -256,6 +258,10 @@ JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
 **Optional**
 
 ```env
+# CORS/Front-end (ajuste para o seu domínio)
+CORS_ORIGIN="http://localhost:5173"
+FRONTEND_URL="http://localhost:5173"
+
 STRIPE_SECRET_KEY=
 SMTP_HOST=
 SMTP_USER=
