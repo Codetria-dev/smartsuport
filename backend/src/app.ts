@@ -2,16 +2,14 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import 'express-async-errors';
 import { env } from './config/env';
+import { corsOptions } from './config/corsOptions';
 import { errorHandler } from './middleware/error.middleware';
 import { stripeWebhookHandler } from './controllers/billingController';
 
 const app: Express = express();
 
-// Middlewares básicos
-app.use(cors({
-  origin: env.CORS_ORIGIN,
-  credentials: true,
-}));
+// CORS primeiro: preflight OPTIONS e credenciais antes de qualquer rota ou body parser
+app.use(cors(corsOptions));
 
 // Webhook Stripe precisa do body raw para verificar assinatura (antes de express.json)
 app.post(

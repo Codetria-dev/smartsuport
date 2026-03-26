@@ -10,6 +10,27 @@ function parseCorsOrigins(raw: string | undefined, fallback: string): string[] {
     .filter(Boolean);
 }
 
+function stripTrailingSlash(url: string): string {
+  return url.trim().replace(/\/+$/, '');
+}
+
+/** Junta CORS_ORIGIN com FRONTEND_URL para não esquecer o domínio de produção no Railway. */
+function buildCorsOrigins(): string[] {
+  const fromList = parseCorsOrigins(
+    process.env.CORS_ORIGIN,
+    'http://localhost:5173'
+  );
+  const frontend = stripTrailingSlash(
+    process.env.FRONTEND_URL || 'http://localhost:5173'
+  );
+  const set = new Set<string>();
+  for (const o of fromList) {
+    set.add(stripTrailingSlash(o));
+  }
+  set.add(frontend);
+  return [...set];
+}
+
 interface EnvConfig {
   NODE_ENV: string;
   PORT: number;
@@ -19,6 +40,8 @@ interface EnvConfig {
   JWT_REFRESH_TOKEN_EXPIRES_IN: string;
   /** Origens permitidas no CORS (lista separada por vírgula no .env) */
   CORS_ORIGIN: string[];
+  /** Se true, aceita qualquer subdomínio *.vercel.app (previews Vercel) */
+  CORS_ALLOW_VERCEL_PREVIEWS: boolean;
   FRONTEND_URL: string;
   // Stripe
   STRIPE_SECRET_KEY?: string;
@@ -60,10 +83,10 @@ function validateEnv(): EnvConfig {
     JWT_SECRET: process.env.JWT_SECRET!,
     JWT_ACCESS_TOKEN_EXPIRES_IN: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN!,
     JWT_REFRESH_TOKEN_EXPIRES_IN: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN!,
-    CORS_ORIGIN: parseCorsOrigins(
-      process.env.CORS_ORIGIN,
-      'http://localhost:5173'
-    ),
+    CORS_ORIGIN: buildCorsOrigins(),
+    CORS_ALLOW_VERCEL_PREVIEWS:
+      process.env.CORS_ALLOW_VERCEL_PREVIEWS === 'true' ||
+      process.env.CORS_ALLOW_VERCEL_PREVIEWS === '1',
     FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
     // Stripe (opcional)
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
