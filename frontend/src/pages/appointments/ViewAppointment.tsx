@@ -323,7 +323,7 @@ export default function ViewAppointment() {
         <button
           type="button"
           onClick={() => navigate('/agenda')}
-          className="text-sm text-gray-600 hover:text-gray-900 underline"
+          className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
         >
           ← {t('appointments:back')}
         </button>

@@ -110,7 +110,7 @@ export default function PublicBookAppointment() {
                         <button
                           key={`${slot.date}-${slot.time}`}
                           onClick={() => handleSlotSelect(slot.date, slot.time)}
-                          className="px-3 py-2 rounded text-sm transition-colors bg-gray-100 text-gray-700 hover:bg-brand hover:text-white"
+                          className="min-h-[2.5rem] px-3 py-2.5 rounded text-base transition-colors bg-gray-100 text-gray-700 hover:bg-brand hover:text-white"
                         >
                           {slot.time}
                         </button>
@@ -126,7 +126,7 @@ export default function PublicBookAppointment() {
           <button
             type="button"
             onClick={() => navigate('/select-provider')}
-            className="text-sm text-gray-600 hover:text-gray-900 underline"
+            className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
           >
             ← Voltar
           </button>

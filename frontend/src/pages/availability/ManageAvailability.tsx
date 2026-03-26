@@ -254,7 +254,7 @@ export default function ManageAvailability() {
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="shrink-0 px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="shrink-0 min-h-[2.75rem] px-5 py-2.5 rounded-lg bg-gray-900 text-white text-base font-medium hover:bg-gray-800 transition-colors"
           >
             {t('availability:newAvailability')}
           </button>
@@ -393,7 +393,7 @@ export default function ManageAvailability() {
               setShowSlots(!showSlots);
               if (!showSlots && user?.id) loadAvailableSlots();
             }}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="min-h-[2.75rem] px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-base font-medium hover:bg-gray-50 transition-colors"
           >
             {showSlots ? t('availability:hideSlots') : t('availability:viewAgenda')}
           </button>
@@ -591,14 +591,14 @@ export default function ManageAvailability() {
                             <div className="flex gap-2 pt-2">
                               <button
                                 type="submit"
-                                className="flex-1 px-3 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800"
+                                className="flex-1 min-h-[2.75rem] px-4 py-2.5 rounded-lg bg-gray-900 text-white text-base font-medium hover:bg-gray-800"
                               >
                                 {t('availability:save')}
                               </button>
                               <button
                                 type="button"
                                 onClick={cancelEdit}
-                                className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm hover:bg-gray-100"
+                                className="flex-1 min-h-[2.75rem] px-4 py-2.5 rounded-lg border border-gray-300 text-gray-600 text-base hover:bg-gray-100"
                               >
                                 {t('availability:cancel')}
                               </button>
@@ -627,7 +627,7 @@ export default function ManageAvailability() {
                               <button
                                 type="button"
                                 onClick={() => startEdit(availability)}
-                                className="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-800 text-sm font-medium hover:bg-gray-300 transition-colors"
+                                className="min-h-[2.5rem] px-4 py-2 rounded-lg bg-gray-200 text-gray-800 text-base font-medium hover:bg-gray-300 transition-colors"
                               >
                                 {t('availability:edit')}
                               </button>
@@ -635,7 +635,7 @@ export default function ManageAvailability() {
                                 type="button"
                                 onClick={() => toggleActive(availability)}
                                 disabled={togglingId === availability.id}
-                                className="px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-800 text-sm font-medium hover:bg-yellow-200 transition-colors disabled:opacity-50"
+                                className="min-h-[2.5rem] px-4 py-2 rounded-lg bg-yellow-100 text-yellow-800 text-base font-medium hover:bg-yellow-200 transition-colors disabled:opacity-50"
                               >
                                 {availability.isActive ? t('availability:deactivate') : t('availability:activate')}
                               </button>
@@ -643,7 +643,7 @@ export default function ManageAvailability() {
                                 type="button"
                                 onClick={() => handleDelete(availability.id)}
                                 disabled={deletingId === availability.id}
-                                className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+                                className="min-h-[2.5rem] px-4 py-2 rounded-lg bg-red-500 text-white text-base font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
                               >
                                 {deletingId === availability.id
                                   ? t('availability:deleting')

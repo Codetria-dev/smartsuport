@@ -1,5 +1,6 @@
-// PostCSS config - Tailwind agora é gerenciado pelo plugin do Vite
-// Este arquivo pode ser usado para outros plugins PostCSS se necessário
+// Tailwind v4 processado pelo PostCSS (Vite aplica PostCSS a todos os .css)
 export default {
-  plugins: {},
-}
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+};

@@ -7,11 +7,11 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="public-layout-root min-h-screen flex flex-col bg-slate-50 w-full min-w-0 overflow-x-hidden">
       <PublicHeader />
-      <div className="flex-1 flex flex-col min-h-0 w-full overflow-x-hidden">
+      <main className="public-layout-main flex-1 flex flex-col min-h-0 w-full min-w-0">
         {children}
-      </div>
+      </main>
       <Footer />
     </div>
   );

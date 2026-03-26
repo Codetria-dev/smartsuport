@@ -2,6 +2,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+function parseCorsOrigins(raw: string | undefined, fallback: string): string[] {
+  const value = raw?.trim() || fallback;
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 interface EnvConfig {
   NODE_ENV: string;
   PORT: number;
@@ -9,7 +17,8 @@ interface EnvConfig {
   JWT_SECRET: string;
   JWT_ACCESS_TOKEN_EXPIRES_IN: string;
   JWT_REFRESH_TOKEN_EXPIRES_IN: string;
-  CORS_ORIGIN: string;
+  /** Origens permitidas no CORS (lista separada por vírgula no .env) */
+  CORS_ORIGIN: string[];
   FRONTEND_URL: string;
   // Stripe
   STRIPE_SECRET_KEY?: string;
@@ -51,7 +60,10 @@ function validateEnv(): EnvConfig {
     JWT_SECRET: process.env.JWT_SECRET!,
     JWT_ACCESS_TOKEN_EXPIRES_IN: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN!,
     JWT_REFRESH_TOKEN_EXPIRES_IN: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN!,
-    CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    CORS_ORIGIN: parseCorsOrigins(
+      process.env.CORS_ORIGIN,
+      'http://localhost:5173'
+    ),
     FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
     // Stripe (opcional)
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,

@@ -1,8 +1,19 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { storage } from '../utils/storage';
 
+/** Garante que a base termina em /api (evita VITE_API_URL sem sufixo em produção). */
+function normalizeApiBaseUrl(url: string): string {
+  const trimmed = url.replace(/\/+$/, '');
+  if (trimmed.endsWith('/api')) return trimmed;
+  return `${trimmed}/api`;
+}
+
 // Em dev: usa /api para o proxy do Vite (localhost:5173 → localhost:3000)
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '/api' : 'http://localhost:3000/api');
+const API_URL = import.meta.env.VITE_API_URL
+  ? normalizeApiBaseUrl(import.meta.env.VITE_API_URL)
+  : import.meta.env.DEV
+    ? '/api'
+    : 'http://localhost:3000/api';
 
 // Cria instância do axios
 export const api: AxiosInstance = axios.create({

@@ -199,7 +199,7 @@ export default function AdminDashboard() {
             </h2>
             <button
               onClick={() => navigate('/agenda')}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-base text-blue-600 hover:text-blue-700 font-medium py-1.5 px-1 -mx-1 rounded"
             >
               Ver todos →
             </button>
@@ -236,14 +236,14 @@ export default function AdminDashboard() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => navigate(`/appointments/${appointment.id}`)}
-                            className="text-blue-600 hover:text-blue-700 text-xs font-medium"
+                            className="text-blue-600 hover:text-blue-700 text-sm font-medium py-1.5 px-2 -mx-1 rounded min-h-[2.25rem]"
                           >
                             Editar
                           </button>
                           {appointment.status !== AppointmentStatus.CANCELLED && (
                             <button
                               onClick={() => handleCancelAppointment(appointment.id)}
-                              className="text-red-600 hover:text-red-700 text-xs font-medium"
+                              className="text-red-600 hover:text-red-700 text-sm font-medium py-1.5 px-2 -mx-1 rounded min-h-[2.25rem]"
                             >
                               Cancelar
                             </button>
@@ -305,7 +305,7 @@ function ActionButton({
       className="p-4 bg-white hover:bg-gray-100 rounded-lg text-center transition border border-gray-200"
     >
       {icon ? <div className="text-2xl mb-2">{icon}</div> : null}
-      <div className="text-xs font-medium text-gray-700">{label}</div>
+      <div className="text-sm font-medium text-gray-700">{label}</div>
     </button>
   );
 }

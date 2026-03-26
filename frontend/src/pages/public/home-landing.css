@@ -1,67 +1,481 @@
-/* Fallback: espaçamento da landing se Tailwind não aplicar */
-[data-landing="true"] section:first-of-type > div {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
+/*
+ * Layout da landing — CSS explícito (não depende do scan do Tailwind).
+ * Mantém secções centradas, grelhas com gap e ritmo vertical consistente.
+ */
+
+[data-landing='true'].landing-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding-bottom: 2rem;
 }
-[data-landing="true"] section:nth-of-type(2) > div {
-  margin-top: 4rem;
+
+@media (min-width: 768px) {
+  [data-landing='true'].landing-page {
+    padding-bottom: 3rem;
+  }
 }
-[data-landing="true"] section:nth-of-type(2) {
-  padding-bottom: 4rem;
+
+/* Contentor central (≈ max-w-7xl) */
+.landing-shell {
+  width: 100%;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
 }
-[data-landing="true"] section:nth-of-type(3),
-[data-landing="true"] section:nth-of-type(4),
-[data-landing="true"] section:nth-of-type(5),
-[data-landing="true"] section:nth-of-type(6) {
+
+@media (min-width: 640px) {
+  .landing-shell {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-shell {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Secções: fundo + padding vertical + separador suave */
+.landing-section {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.landing-section--hero {
+  background: #fff;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .landing-section--hero {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-section--hero {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
+.landing-section--preview {
+  background: #f9fafb;
   padding-top: 4rem;
   padding-bottom: 4rem;
-}
-footer.mt-20 {
-  margin-top: 5rem;
+  border-top: 1px solid rgba(243, 244, 246, 0.95);
 }
 
-/* Espaços entre subtítulo e botões, e entre os botões */
-[data-landing="true"] .landing-hero-subtitle {
-  margin-bottom: 2rem;
-}
-[data-landing="true"] .landing-hero-ctas {
-  margin-top: 2rem;
-  gap: 1.5rem;
-}
-[data-landing="true"] .landing-cta-subtitle {
-  margin-bottom: 2rem;
-}
-[data-landing="true"] .landing-cta-buttons {
-  margin-top: 2rem;
-  gap: 1.5rem;
+@media (min-width: 768px) {
+  .landing-section--preview {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
 }
 
-/* Botões da landing — estilos fixos para garantir aparência */
-[data-landing="true"] .btn-landing-primary {
+@media (min-width: 1024px) {
+  .landing-section--preview {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+.landing-section--stats {
+  background: #fff;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  border-top: 1px solid rgba(243, 244, 246, 0.95);
+}
+
+@media (min-width: 768px) {
+  .landing-section--stats {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-section--stats {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+.landing-section--features {
+  background: #f9fafb;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  border-top: 1px solid rgba(243, 244, 246, 0.95);
+}
+
+@media (min-width: 768px) {
+  .landing-section--features {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-section--features {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+.landing-section--cta {
+  background: #fff;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  border-top: 1px solid rgba(243, 244, 246, 0.95);
+}
+
+@media (min-width: 768px) {
+  .landing-section--cta {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-section--cta {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
+/* Hero: texto estreito centrado */
+.landing-hero-copy {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.landing-hero-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .landing-hero-title {
+    font-size: 3rem;
+  }
+}
+
+.landing-hero-subtitle {
+  font-size: 1.125rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+}
+
+.landing-hero-ctas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .landing-hero-ctas {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* Carrossel */
+.landing-carousel {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #e5e7eb;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
+  max-height: min(50vh, 420px);
+}
+
+@media (min-width: 640px) {
+  .landing-carousel {
+    max-height: min(55vh, 480px);
+  }
+}
+
+.landing-carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-out;
+  height: min(50vh, 420px);
+}
+
+@media (min-width: 640px) {
+  .landing-carousel-track {
+    height: min(55vh, 480px);
+  }
+}
+
+.landing-carousel-slide {
+  min-width: 100%;
+  height: 100%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.landing-carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.landing-carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: none;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #374151;
+}
+
+.landing-carousel-nav:hover {
+  background: #fff;
+}
+
+.landing-carousel-nav--prev {
+  left: 0.75rem;
+}
+
+.landing-carousel-nav--next {
+  right: 0.75rem;
+}
+
+.landing-carousel-dots {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.landing-carousel-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.landing-carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.landing-carousel-dot.is-active {
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+}
+
+/* Grelha de estatísticas */
+.landing-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 2rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .landing-stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem 2.5rem;
+  }
+}
+
+.landing-stat-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.landing-stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0;
+}
+
+/* Benefícios */
+.landing-features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .landing-features-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-features-grid {
+    gap: 3rem;
+  }
+}
+
+.landing-feature-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .landing-feature-card {
+    padding: 1.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .landing-feature-card {
+    padding: 2rem;
+  }
+}
+
+.landing-feature-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08);
+}
+
+.landing-feature-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem;
+}
+
+.landing-feature-desc {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+/* CTA final */
+.landing-cta-copy {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.landing-cta-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .landing-cta-title {
+    font-size: 1.875rem;
+  }
+}
+
+.landing-cta-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+}
+
+.landing-cta-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .landing-cta-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* Espaços entre subtítulo e botões, e entre os botões (legado) */
+[data-landing='true'] .landing-hero-subtitle {
+  margin-bottom: 2rem;
+}
+
+[data-landing='true'] .landing-cta-subtitle {
+  margin-bottom: 2rem;
+}
+
+/* Botões da landing — estilos fixos */
+[data-landing='true'] .btn-landing-primary {
   background-color: #f97316;
   color: #fff;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.75rem;
+  min-height: 2.75rem;
   border-radius: 0.5rem;
   font-weight: 500;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  line-height: 1.4;
 }
-[data-landing="true"] .btn-landing-primary:hover {
+
+[data-landing='true'] .btn-landing-primary:hover {
   background-color: #ea580c;
 }
 
-[data-landing="true"] .btn-landing-secondary {
+[data-landing='true'] .btn-landing-secondary {
   border: 1px solid #d1d5db;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.75rem;
+  min-height: 2.75rem;
   border-radius: 0.5rem;
   background-color: #fff;
   color: #111827;
   cursor: pointer;
   font-weight: 500;
   font-size: 1rem;
+  line-height: 1.4;
 }
-[data-landing="true"] .btn-landing-secondary:hover {
+
+[data-landing='true'] .btn-landing-secondary:hover {
   background-color: #f9fafb;
 }

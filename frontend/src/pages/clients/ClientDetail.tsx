@@ -111,7 +111,7 @@ export default function ClientDetail() {
         <div className="flex gap-3 mt-8">
           <Link
             to={`/clients/${id}/agendar`}
-            className="px-5 py-2 rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors"
+            className="inline-flex items-center justify-center min-h-[2.75rem] px-5 py-2.5 text-base rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors"
           >
             {t('scheduleAppointment')}
           </Link>
@@ -119,7 +119,7 @@ export default function ClientDetail() {
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="px-5 py-2 rounded-lg border border-gray-300 text-red-600 font-medium hover:bg-red-50 transition-colors disabled:opacity-50"
+            className="min-h-[2.75rem] px-5 py-2.5 text-base rounded-lg border border-gray-300 text-red-600 font-medium hover:bg-red-50 transition-colors disabled:opacity-50"
           >
             {deleting ? t('deleting') : t('deleteClient')}
           </button>

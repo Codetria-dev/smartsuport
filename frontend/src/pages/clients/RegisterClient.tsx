@@ -111,14 +111,14 @@ export default function RegisterClient() {
             <button
               type="button"
               onClick={() => navigate('/agenda')}
-              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors"
+              className="min-h-[2.75rem] px-5 py-2.5 text-base rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors"
             >
               {t('clients:cancel')}
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none"
+              className="min-h-[2.75rem] px-5 py-2.5 text-base rounded-lg bg-gray-900 text-white hover:bg-gray-800 font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               {isLoading ? t('clients:saving') : t('clients:submitButton')}
             </button>

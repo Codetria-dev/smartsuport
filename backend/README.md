@@ -165,9 +165,9 @@ JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
 **Optional**
 
 ```env
- # CORS/Front-end (ajuste para o seu domínio)
- CORS_ORIGIN="http://localhost:5173"
- FRONTEND_URL="http://localhost:5173"
+ # CORS: uma origem ou várias separadas por vírgula (obrigatório incluir o domínio do front em produção, ex.: Vercel)
+ CORS_ORIGIN="http://localhost:5173,https://seu-app.vercel.app"
+ FRONTEND_URL="https://seu-app.vercel.app"
 
  # Stripe (billing)
 STRIPE_SECRET_KEY=

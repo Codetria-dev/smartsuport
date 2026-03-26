@@ -166,7 +166,7 @@ export default function BookAppointment() {
                         <button
                           key={`${slot.date}-${slot.time}`}
                           onClick={() => handleSlotSelect(slot.date, slot.time)}
-                          className={`px-3 py-2 rounded text-sm transition-colors ${
+                          className={`min-h-[2.5rem] px-3 py-2.5 rounded text-base transition-colors ${
                             selectedDate === slot.date && selectedTime === slot.time
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

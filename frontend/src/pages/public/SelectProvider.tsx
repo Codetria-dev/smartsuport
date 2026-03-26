@@ -128,7 +128,7 @@ export default function SelectProvider() {
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="text-sm text-gray-600 hover:text-gray-900 underline"
+          className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
         >
           ← {t('backToHome')}
         </button>

@@ -314,7 +314,7 @@ export default function NewAppointment() {
                         : 'border-gray-300 hover:border-blue-300'
                     }`}
                   >
-                    <div className="text-sm font-medium">
+                    <div className="text-base font-medium">
                       {new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">

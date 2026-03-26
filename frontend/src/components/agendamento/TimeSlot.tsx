@@ -10,7 +10,7 @@ export default function TimeSlot({ time, available, selected, onClick }: TimeSlo
     return (
       <button
         disabled
-        className="px-4 py-2 border border-gray-200 rounded-lg text-gray-400 cursor-not-allowed bg-gray-50"
+        className="min-h-[2.5rem] px-4 py-2.5 border border-gray-200 rounded-lg text-base text-gray-400 cursor-not-allowed bg-gray-50"
       >
         {time}
       </button>
@@ -20,7 +20,7 @@ export default function TimeSlot({ time, available, selected, onClick }: TimeSlo
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 border rounded-lg transition ${
+      className={`min-h-[2.5rem] px-4 py-2.5 text-base border rounded-lg transition ${
         selected
           ? 'bg-brand text-white border-brand'
           : 'border-gray-300 hover:border-brand hover:bg-brand/10'

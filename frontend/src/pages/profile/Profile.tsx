@@ -230,7 +230,7 @@ export default function Profile() {
             <button
               type="submit"
               disabled={saving}
-              className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-gray-900 text-white px-6 py-3 rounded-lg text-base font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[2.75rem]"
             >
               {saving ? t('saving') : t('save')}
             </button>

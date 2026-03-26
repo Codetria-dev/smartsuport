@@ -135,7 +135,7 @@ export default function Plans() {
         <button
           type="button"
           disabled
-          className="w-full bg-gray-200 text-gray-700 rounded-lg py-2.5 text-sm font-medium cursor-not-allowed"
+          className="w-full bg-gray-200 text-gray-700 rounded-lg py-3.5 text-base font-medium cursor-not-allowed"
         >
           {t('currentPlan')}
         </button>
@@ -148,7 +148,7 @@ export default function Plans() {
           type="button"
           onClick={() => handleUpgrade('SMART')}
           disabled={!!actionLoading}
-          className="w-full bg-orange-500 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-orange-500 text-white rounded-lg py-3.5 text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {actionLoading === 'SMART' ? '...' : 'Upgrade to Smart'}
         </button>
@@ -160,7 +160,7 @@ export default function Plans() {
           type="button"
           onClick={() => handleUpgrade('PRO')}
           disabled={!!actionLoading}
-          className="w-full bg-orange-500 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-orange-500 text-white rounded-lg py-3.5 text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {actionLoading === 'PRO' ? '...' : 'Upgrade to Pro'}
         </button>
@@ -209,7 +209,7 @@ export default function Plans() {
                 type="button"
                 onClick={handleCancelSubscription}
                 disabled={!!actionLoading}
-                className="text-sm text-gray-600 hover:text-gray-900 underline disabled:opacity-50"
+                className="text-base text-gray-600 hover:text-gray-900 underline py-1.5 disabled:opacity-50"
               >
                 {actionLoading === 'cancel' ? '...' : t('cancelSubscription')}
               </button>

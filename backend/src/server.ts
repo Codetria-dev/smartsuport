@@ -19,7 +19,7 @@ async function startServer() {
     app.listen(env.PORT, () => {
       console.log(`Server running on port ${env.PORT}`);
       console.log(`Environment: ${env.NODE_ENV}`);
-      console.log(`CORS enabled for: ${env.CORS_ORIGIN}`);
+      console.log(`CORS enabled for: ${env.CORS_ORIGIN.join(', ')}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

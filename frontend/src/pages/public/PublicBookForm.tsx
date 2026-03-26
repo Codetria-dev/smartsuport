@@ -193,7 +193,7 @@ export default function PublicBookForm() {
           <button
             type="button"
             onClick={() => navigate(`/book/${providerId}`)}
-            className="text-sm text-gray-600 hover:text-gray-900 underline"
+            className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
           >
             ← Voltar
           </button>

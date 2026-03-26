@@ -20,7 +20,7 @@ export default function LanguageSwitcher({ variant = 'default' }: LanguageSwitch
         <button
           type="button"
           onClick={() => handleChange('pt')}
-          className={`px-3 py-1.5 font-medium transition-colors ${
+          className={`px-4 py-2 text-base font-medium transition-colors ${
             i18n.language === 'pt' || i18n.language.startsWith('pt')
               ? isLight ? 'bg-white/25 text-white' : 'bg-brand text-white'
               : isLight ? 'text-white/80 hover:bg-white/10' : 'text-gray-600 hover:bg-gray-50'
@@ -32,7 +32,7 @@ export default function LanguageSwitcher({ variant = 'default' }: LanguageSwitch
         <button
           type="button"
           onClick={() => handleChange('en')}
-          className={`px-3 py-1.5 font-medium transition-colors ${
+          className={`px-4 py-2 text-base font-medium transition-colors ${
             i18n.language === 'en' || i18n.language.startsWith('en')
               ? isLight ? 'bg-white/25 text-white' : 'bg-brand text-white'
               : isLight ? 'text-white/80 hover:bg-white/10' : 'text-gray-600 hover:bg-gray-50'
