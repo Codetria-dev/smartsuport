@@ -3,12 +3,13 @@ import { storage } from '../utils/storage';
 
 /**
  * Origem da API (sem /api no fim).
- * VITE_API_URL pode ser https://backend.railway.app ou https://.../api — normalizamos.
+ * - Vazio: pedidos relativos /api/... (Vite proxy em dev; na Vercel, vercel.json reencaminha para o Railway — evita CORS no browser).
+ * - Definido: URL absoluta do backend (cross-origin; o servidor tem de permitir CORS).
  */
 export function getApiOrigin(): string {
   const raw = import.meta.env.VITE_API_URL;
-  if (!raw) {
-    return import.meta.env.DEV ? '' : 'http://localhost:3000';
+  if (!raw || String(raw).trim() === '') {
+    return '';
   }
   let u = String(raw).trim().replace(/\/+$/, '');
   if (u.endsWith('/api')) {
