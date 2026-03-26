@@ -6,7 +6,7 @@ export const appointmentService = {
    * Lista agendamentos do usuário logado
    */
   getMyAppointments: async (): Promise<Appointment[]> => {
-    const response = await api.get<Appointment[]>('/appointments/me');
+    const response = await api.get<Appointment[]>('/api/appointments/me');
     return response.data;
   },
 
@@ -14,7 +14,7 @@ export const appointmentService = {
    * Obtém um agendamento por ID
    */
   getAppointmentById: async (id: string): Promise<Appointment> => {
-    const response = await api.get<Appointment>(`/appointments/${id}`);
+    const response = await api.get<Appointment>(`/api/appointments/${id}`);
     return response.data;
   },
 
@@ -22,7 +22,7 @@ export const appointmentService = {
    * Cria um novo agendamento
    */
   createAppointment: async (data: CreateAppointmentInput): Promise<Appointment> => {
-    const response = await api.post<Appointment>('/appointments', data);
+    const response = await api.post<Appointment>('/api/appointments', data);
     return response.data;
   },
 
@@ -30,7 +30,7 @@ export const appointmentService = {
    * Confirma um agendamento
    */
   confirmAppointment: async (id: string): Promise<Appointment> => {
-    const response = await api.put<Appointment>(`/appointments/${id}/confirm`);
+    const response = await api.put<Appointment>(`/api/appointments/${id}/confirm`);
     return response.data;
   },
 
@@ -38,7 +38,7 @@ export const appointmentService = {
    * Cancela um agendamento
    */
   cancelAppointment: async (id: string, reason?: string): Promise<Appointment> => {
-    const response = await api.put<Appointment>(`/appointments/${id}/cancel`, { reason });
+    const response = await api.put<Appointment>(`/api/appointments/${id}/cancel`, { reason });
     return response.data;
   },
 
@@ -49,7 +49,7 @@ export const appointmentService = {
     id: string,
     data: Partial<CreateAppointmentInput>
   ): Promise<Appointment> => {
-    const response = await api.put<Appointment>(`/appointments/${id}`, data);
+    const response = await api.put<Appointment>(`/api/appointments/${id}`, data);
     return response.data;
   },
 
@@ -69,7 +69,7 @@ export const appointmentService = {
     location?: string;
     meetingLink?: string;
   }): Promise<Appointment> => {
-    const response = await api.post<Appointment>('/appointments/public/book', data);
+    const response = await api.post<Appointment>('/api/appointments/public/book', data);
     return response.data;
   },
 
@@ -77,7 +77,7 @@ export const appointmentService = {
    * Obtém um agendamento pelo token público
    */
   getAppointmentByPublicToken: async (token: string): Promise<Appointment> => {
-    const response = await api.get<Appointment>(`/appointments/public/appointment/${token}`);
+    const response = await api.get<Appointment>(`/api/appointments/public/appointment/${token}`);
     return response.data;
   },
 
@@ -85,7 +85,7 @@ export const appointmentService = {
    * Cancela um agendamento público pelo token
    */
   cancelPublicAppointment: async (token: string, reason?: string): Promise<Appointment> => {
-    const response = await api.put<Appointment>(`/appointments/public/appointment/${token}/cancel`, { reason });
+    const response = await api.put<Appointment>(`/api/appointments/public/appointment/${token}/cancel`, { reason });
     return response.data;
   },
 
@@ -100,7 +100,7 @@ export const appointmentService = {
     avatar?: string;
     profileDescription?: string;
   }>> => {
-    const response = await api.get('/appointments/public/providers', {
+    const response = await api.get('/api/appointments/public/providers', {
       params: { _t: Date.now() },
       headers: { 'Cache-Control': 'no-cache' },
     });

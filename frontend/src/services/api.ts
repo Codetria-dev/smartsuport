@@ -1,29 +1,32 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { storage } from '../utils/storage';
 
-/** Garante que a base termina em /api (evita VITE_API_URL sem sufixo em produção). */
-function normalizeApiBaseUrl(url: string): string {
-  const trimmed = url.replace(/\/+$/, '');
-  if (trimmed.endsWith('/api')) return trimmed;
-  return `${trimmed}/api`;
+/**
+ * Origem da API (sem /api no fim).
+ * VITE_API_URL pode ser https://backend.railway.app ou https://.../api — normalizamos.
+ */
+export function getApiOrigin(): string {
+  const raw = import.meta.env.VITE_API_URL;
+  if (!raw) {
+    return import.meta.env.DEV ? '' : 'http://localhost:3000';
+  }
+  let u = String(raw).trim().replace(/\/+$/, '');
+  if (u.endsWith('/api')) {
+    u = u.slice(0, -4);
+  }
+  return u;
 }
 
-// Em dev: usa /api para o proxy do Vite (localhost:5173 → localhost:3000)
-const API_URL = import.meta.env.VITE_API_URL
-  ? normalizeApiBaseUrl(import.meta.env.VITE_API_URL)
-  : import.meta.env.DEV
-    ? '/api'
-    : 'http://localhost:3000/api';
+const API_ORIGIN = getApiOrigin();
 
-// Cria instância do axios
+/** baseURL = origem; paths devem começar por /api/... (alinhado ao Express app.use('/api/...')) */
 export const api: AxiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: API_ORIGIN,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor para adicionar token em todas as requisições
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = storage.getAccessToken();
@@ -32,65 +35,54 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor para tratar erros de autenticação
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Ignora erros em rotas públicas (login, register, forgot-password, reset-password)
-    // Mas permite refresh token tentar fazer refresh
-    const isPublicAuthRoute = originalRequest?.url?.includes('/auth/login') || 
-                              originalRequest?.url?.includes('/auth/register') ||
-                              originalRequest?.url?.includes('/auth/forgot-password') ||
-                              originalRequest?.url?.includes('/auth/reset-password') ||
-                              originalRequest?.url?.includes('/public/');
-    
+    const isPublicAuthRoute =
+      originalRequest?.url?.includes('/api/auth/login') ||
+      originalRequest?.url?.includes('/api/auth/register') ||
+      originalRequest?.url?.includes('/api/auth/forgot-password') ||
+      originalRequest?.url?.includes('/api/auth/reset-password') ||
+      originalRequest?.url?.includes('/public/');
+
     if (isPublicAuthRoute) {
       return Promise.reject(error);
     }
 
-    // Se erro 401 e não foi tentado refresh ainda
-    // Não tenta refresh se já está tentando fazer refresh (evita loop)
-    if (error.response?.status === 401 && 
-        !originalRequest._retry && 
-        !originalRequest?.url?.includes('/auth/refresh')) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest?.url?.includes('/api/auth/refresh')
+    ) {
       originalRequest._retry = true;
 
       try {
         const refreshToken = storage.getRefreshToken();
         if (!refreshToken) {
-          // Se não há refresh token, apenas rejeita sem redirecionar
-          // (pode ser uma rota pública ou usuário não autenticado)
           return Promise.reject(error);
         }
 
-        // Tenta renovar o token apenas se houver refresh token
-        const response = await axios.post(`${API_URL}/auth/refresh`, {
-          refreshToken,
-        }, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        const refreshUrl = `${API_ORIGIN}/api/auth/refresh`;
+        const response = await axios.post(
+          refreshUrl,
+          { refreshToken },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
 
         const { accessToken } = response.data;
         if (accessToken) {
           storage.setAccessToken(accessToken);
-
-          // Repete a requisição original com o novo token
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return api(originalRequest);
         }
-      } catch (refreshError: any) {
-        // Se falhar, limpa storage mas não redireciona automaticamente
-        // (deixa o componente decidir o que fazer)
-        console.error('Refresh token failed:', refreshError?.response?.data || refreshError.message);
+      } catch (refreshError: unknown) {
+        const err = refreshError as { response?: { data?: unknown }; message?: string };
+        console.error('Refresh token failed:', err?.response?.data || err?.message);
         storage.clearAll();
         return Promise.reject(refreshError);
       }

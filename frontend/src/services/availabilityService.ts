@@ -6,7 +6,7 @@ export const availabilityService = {
    * Lista disponibilidades do provider logado
    */
   getMyAvailabilities: async (): Promise<Availability[]> => {
-    const response = await api.get<Availability[]>('/availability/me');
+    const response = await api.get<Availability[]>('/api/availability/me');
     return response.data;
   },
 
@@ -14,7 +14,7 @@ export const availabilityService = {
    * Cria uma nova disponibilidade
    */
   createAvailability: async (data: CreateAvailabilityInput): Promise<Availability> => {
-    const response = await api.post<Availability>('/availability', data);
+    const response = await api.post<Availability>('/api/availability', data);
     return response.data;
   },
 
@@ -25,7 +25,7 @@ export const availabilityService = {
     id: string,
     data: Partial<CreateAvailabilityInput>
   ): Promise<Availability> => {
-    const response = await api.put<Availability>(`/availability/${id}`, data);
+    const response = await api.put<Availability>(`/api/availability/${id}`, data);
     return response.data;
   },
 
@@ -33,7 +33,7 @@ export const availabilityService = {
    * Deleta uma disponibilidade
    */
   deleteAvailability: async (id: string): Promise<void> => {
-    await api.delete(`/availability/${id}`);
+    await api.delete(`/api/availability/${id}`);
   },
 
   /**
@@ -44,7 +44,7 @@ export const availabilityService = {
     startDate: string,
     endDate: string
   ): Promise<TimeSlot[]> => {
-    const response = await api.get<TimeSlot[]>(`/availability/public/${providerId}/slots`, {
+    const response = await api.get<TimeSlot[]>(`/api/availability/public/${providerId}/slots`, {
       params: {
         startDate,
         endDate,

@@ -54,7 +54,7 @@ export const adminService = {
    * Obtém estatísticas do dashboard
    */
   async getDashboardStats(): Promise<DashboardStats> {
-    const response = await api.get('/admin/dashboard/stats');
+    const response = await api.get('/api/admin/dashboard/stats');
     return response.data;
   },
 
@@ -68,7 +68,7 @@ export const adminService = {
     plan?: string;
     isActive?: boolean;
   }): Promise<UsersListResponse> {
-    const response = await api.get('/admin/users', { params });
+    const response = await api.get('/api/admin/users', { params });
     return response.data;
   },
 
@@ -76,7 +76,7 @@ export const adminService = {
    * Obtém detalhes de um usuário
    */
   async getUserDetails(userId: string): Promise<UserDetails> {
-    const response = await api.get(`/admin/users/${userId}`);
+    const response = await api.get(`/api/admin/users/${userId}`);
     return response.data;
   },
 
@@ -84,7 +84,7 @@ export const adminService = {
    * Ativa/desativa usuário
    */
   async toggleUserStatus(userId: string, isActive: boolean) {
-    const response = await api.put(`/admin/users/${userId}/status`, { isActive });
+    const response = await api.put(`/api/admin/users/${userId}/status`, { isActive });
     return response.data;
   },
 
@@ -92,7 +92,7 @@ export const adminService = {
    * Atualiza plano do usuário
    */
   async updateUserPlan(userId: string, plan: 'FREE' | 'PRO', status: 'ACTIVE' | 'CANCELLED' | 'EXPIRED') {
-    const response = await api.put(`/admin/users/${userId}/plan`, { plan, status });
+    const response = await api.put(`/api/admin/users/${userId}/plan`, { plan, status });
     return response.data;
   },
 
@@ -107,7 +107,7 @@ export const adminService = {
     startDate?: string;
     endDate?: string;
   }) {
-    const response = await api.get('/admin/appointments', { params });
+    const response = await api.get('/api/admin/appointments', { params });
     return response.data;
   },
 };

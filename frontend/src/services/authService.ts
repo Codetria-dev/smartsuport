@@ -6,7 +6,7 @@ export const authService = {
    * Registra um novo usuário
    */
   async register(data: RegisterData) {
-    const response = await api.post('/auth/register', data);
+    const response = await api.post('/api/auth/register', data);
     return response.data;
   },
 
@@ -14,7 +14,7 @@ export const authService = {
    * Cadastra um novo cliente (apenas profissional/admin no painel)
    */
   async registerClient(data: { name: string; email: string; password: string; phone?: string }) {
-    const response = await api.post('/auth/register-client', data);
+    const response = await api.post('/api/auth/register-client', data);
     return response.data;
   },
 
@@ -22,7 +22,7 @@ export const authService = {
    * Faz login
    */
   async login(credentials: LoginCredentials) {
-    const response = await api.post('/auth/login', credentials);
+    const response = await api.post('/api/auth/login', credentials);
     return response.data;
   },
 
@@ -30,7 +30,7 @@ export const authService = {
    * Atualiza access token usando refresh token
    */
   async refreshToken(refreshToken: string) {
-    const response = await api.post('/auth/refresh', { refreshToken });
+    const response = await api.post('/api/auth/refresh', { refreshToken });
     return response.data;
   },
 
@@ -38,7 +38,7 @@ export const authService = {
    * Solicita reset de senha
    */
   async forgotPassword(email: string) {
-    const response = await api.post('/auth/forgot-password', { email });
+    const response = await api.post('/api/auth/forgot-password', { email });
     return response.data;
   },
 
@@ -46,7 +46,7 @@ export const authService = {
    * Reseta senha usando token
    */
   async resetPassword(token: string, password: string) {
-    const response = await api.post('/auth/reset-password', { token, password });
+    const response = await api.post('/api/auth/reset-password', { token, password });
     return response.data;
   },
 
@@ -54,7 +54,7 @@ export const authService = {
    * Obtém perfil do usuário logado
    */
   async getProfile(): Promise<Profile> {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/api/auth/me');
     return response.data;
   },
 
@@ -62,7 +62,7 @@ export const authService = {
    * Atualiza perfil do usuário logado
    */
   async updateProfile(data: Partial<Profile>): Promise<Profile> {
-    const response = await api.put('/auth/me', data);
+    const response = await api.put('/api/auth/me', data);
     return response.data;
   },
 
@@ -70,7 +70,7 @@ export const authService = {
    * Altera senha
    */
   async changePassword(currentPassword: string, newPassword: string) {
-    const response = await api.post('/auth/change-password', {
+    const response = await api.post('/api/auth/change-password', {
       currentPassword,
       newPassword,
     });
@@ -81,6 +81,6 @@ export const authService = {
    * Faz logout
    */
   async logout() {
-    await api.post('/auth/logout');
+    await api.post('/api/auth/logout');
   },
 };

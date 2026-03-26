@@ -19,7 +19,7 @@ export const billingService = {
    * Retorna a assinatura atual do usuário
    */
   async getSubscription(): Promise<SubscriptionInfo> {
-    const response = await api.get<SubscriptionInfo>('/billing/subscription');
+    const response = await api.get<SubscriptionInfo>('/api/billing/subscription');
     return response.data;
   },
 
@@ -27,7 +27,7 @@ export const billingService = {
    * Cria sessão de checkout Stripe e retorna a URL para redirecionar
    */
   async createCheckoutSession(plan: 'SMART' | 'PRO'): Promise<CheckoutSessionResult> {
-    const response = await api.post<CheckoutSessionResult>('/billing/checkout', { plan });
+    const response = await api.post<CheckoutSessionResult>('/api/billing/checkout', { plan });
     return response.data;
   },
 
@@ -35,6 +35,6 @@ export const billingService = {
    * Cancela a assinatura no Stripe (efetivo ao final do período ou imediato conforme config)
    */
   async cancelSubscription(): Promise<void> {
-    await api.post('/billing/cancel');
+    await api.post('/api/billing/cancel');
   },
 };

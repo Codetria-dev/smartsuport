@@ -25,7 +25,7 @@ export default function BillingSuccess() {
 
     const syncUser = async () => {
       try {
-        const response = await api.get('/auth/me');
+        const response = await api.get('/api/auth/me');
         updateUser(response.data);
       } catch {
         // Ignora erro; usuário pode já estar atualizado pelo webhook

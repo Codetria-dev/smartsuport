@@ -23,11 +23,13 @@ function buildCorsOrigins(): string[] {
   const frontend = stripTrailingSlash(
     process.env.FRONTEND_URL || 'http://localhost:5173'
   );
+  const productionVercel = 'https://smartsuport.vercel.app';
   const set = new Set<string>();
   for (const o of fromList) {
     set.add(stripTrailingSlash(o));
   }
   set.add(frontend);
+  set.add(productionVercel);
   return [...set];
 }
 

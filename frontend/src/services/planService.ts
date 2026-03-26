@@ -19,7 +19,7 @@ export const planService = {
    * Obtém informações do plano do usuário
    */
   async getUserPlan(): Promise<PlanInfo> {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/api/auth/me');
     const user = response.data || {};
     const planRaw = user.plan ? String(user.plan).toUpperCase() : 'FREE';
     const plan = planRaw === 'PRO' ? 'PRO' : planRaw === 'SMART' ? 'SMART' : 'FREE';

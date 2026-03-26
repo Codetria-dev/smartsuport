@@ -10,6 +10,7 @@ const app: Express = express();
 
 // CORS primeiro: preflight OPTIONS e credenciais antes de qualquer rota ou body parser
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Webhook Stripe precisa do body raw para verificar assinatura (antes de express.json)
 app.post(

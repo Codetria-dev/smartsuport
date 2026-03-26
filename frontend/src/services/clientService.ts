@@ -10,16 +10,16 @@ export interface ClientListItem {
 
 export const clientService = {
   async getClients(): Promise<ClientListItem[]> {
-    const response = await api.get<ClientListItem[]>('/clients');
+    const response = await api.get<ClientListItem[]>('/api/clients');
     return response.data;
   },
 
   async getClient(id: string): Promise<ClientListItem> {
-    const response = await api.get<ClientListItem>(`/clients/${id}`);
+    const response = await api.get<ClientListItem>(`/api/clients/${id}`);
     return response.data;
   },
 
   async deleteClient(id: string): Promise<void> {
-    await api.delete(`/clients/${id}`);
+    await api.delete(`/api/clients/${id}`);
   },
 };

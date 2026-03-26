@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (credentials: LoginCredentials): Promise<void> => {
     try {
-      const response = await api.post<AuthResponse>('/auth/login', credentials);
+      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
       const { user, accessToken, refreshToken } = response.data;
 
       storage.setTokens(accessToken, refreshToken);
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: RegisterData): Promise<void> => {
     try {
-      const response = await api.post<AuthResponse>('/auth/register', data);
+      const response = await api.post<AuthResponse>('/api/auth/register', data);
       const { user, accessToken, refreshToken } = response.data;
 
       storage.setTokens(accessToken, refreshToken);
@@ -94,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     storage.clearAll();
     setUser(null);
     if (refreshToken) {
-      api.post('/auth/logout', { refreshToken }).catch(() => {});
+      api.post('/api/auth/logout', { refreshToken }).catch(() => {});
     }
   };
 

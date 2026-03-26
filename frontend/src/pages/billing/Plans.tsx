@@ -104,7 +104,7 @@ export default function Plans() {
       if (planInfo) {
         setPlanInfo({ ...planInfo, ...userData });
       }
-      const res = await import('../../services/api').then((m) => m.api.get('/auth/me'));
+      const res = await import('../../services/api').then((m) => m.api.get('/api/auth/me'));
       updateUser(res.data);
     } catch (err: unknown) {
       setError((err as { response?: { data?: { error?: string } } })?.response?.data?.error || 'Erro ao cancelar assinatura.');
