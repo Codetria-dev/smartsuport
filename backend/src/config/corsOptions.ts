@@ -38,7 +38,7 @@ export const corsOptions: CorsOptions = {
   },
   credentials: true,
   methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  // Sem lista fixa: o pacote reflecte Access-Control-Request-Headers (evita preflight falhar por headers extra)
   exposedHeaders: [],
   optionsSuccessStatus: 204,
   maxAge: 86400,

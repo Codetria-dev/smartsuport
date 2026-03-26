@@ -69,6 +69,7 @@ i18n
   .init({
     resources,
     debug: false,
+    showSupportNotice: false,
     fallbackLng: 'pt',
     defaultNS: 'common',
     ns: [
