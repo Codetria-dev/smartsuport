@@ -146,12 +146,6 @@ export default function Plans() {
   const startDateFormatted = planInfo.startDate ? new Date(planInfo.startDate).toLocaleDateString() : null;
 
   const renderPlanCta = (slug: PlanSlug) => {
-    const btnStyle: React.CSSProperties = {
-      ...baseInputStyle,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    };
 
     if (slug === currentPlan) {
       return (
