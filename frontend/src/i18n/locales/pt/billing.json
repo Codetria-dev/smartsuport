@@ -22,6 +22,20 @@
   "featureUnlimitedProviders": "Providers ilimitados",
   "featureSentimentAnalysis": "Análise de Sentimento",
   "featureAdvancedAnalytics": "Analytics avançado",
+  "feature50Appointments": "50 agendamentos/mês",
+  "feature1Provider": "1 profissional",
+  "feature200Appointments": "200 agendamentos/mês",
+  "feature3Providers": "3 profissionais",
+  "featureAIAutoResponder": "AI Auto Responder",
+  "featureAISmartScheduling": "AI Smart Scheduling",
+  "featureWebhooksAPI": "Webhooks e API",
+  "featureUnlimitedAppointmentsPro": "Agendamentos ilimitados",
+  "featureUnlimitedProvidersPro": "Profissionais ilimitados",
+  "upgradeToSmart": "Upgrade para Smart",
+  "freePlanLabel": "GRÁTIS",
+  "smartPlanLabel": "SMART",
+  "proPlanLabel": "PRO",
+  "since": "Desde",
   "stripeNotConfigured": "Checkout não disponível. O Stripe ainda não foi configurado no servidor.",
   "cancelSubscription": "Cancelar assinatura",
   "cancelConfirm": "Tem certeza que deseja cancelar sua assinatura? Ela permanecerá ativa até o fim do período atual.",
@@ -29,5 +43,6 @@
   "successMessage": "Seu plano foi ativado com sucesso. Aproveite todos os recursos!",
   "backToPlans": "Voltar aos planos",
   "viewMyPlans": "Ver meus planos",
-  "subtitle": "Gerencie seu plano de assinatura"
+  "subtitle": "Gerencie seu plano de assinatura",
+  "sessionIdNotFound": "Parâmetro session_id não encontrado."
 }

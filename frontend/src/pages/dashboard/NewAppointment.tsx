@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { appointmentService } from '../../services/appointmentService';
 import { availabilityService } from '../../services/availabilityService';
 import { useToast } from '../../contexts/ToastContext';
@@ -18,13 +19,14 @@ interface Provider {
 }
 
 const SERVICOS = [
-  { id: 'consulta-medica', nome: 'Consulta Médica', icon: '' },
-  { id: 'avaliacao', nome: 'Avaliação', icon: '' },
-  { id: 'consulta-online', nome: 'Consulta Online', icon: '' },
-  { id: 'retorno', nome: 'Retorno', icon: '' },
+  { id: 'consulta-medica', nomeKey: 'consultMedical' },
+  { id: 'avaliacao', nomeKey: 'evaluation' },
+  { id: 'consulta-online', nomeKey: 'onlineConsult' },
+  { id: 'retorno', nomeKey: 'returnVisit' },
 ];
 
 export default function NewAppointment() {
+  const { t } = useTranslation('appointments');
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
   const [step, setStep] = useState(1);
@@ -56,7 +58,7 @@ export default function NewAppointment() {
       const data = await appointmentService.getPublicProviders();
       setProviders(data);
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 'Erro ao carregar profissionais';
+      const errorMessage = err.response?.data?.error || t('loadError');
       setError(errorMessage);
       showError(errorMessage);
     } finally {
@@ -80,7 +82,7 @@ export default function NewAppointment() {
       );
       setTimeSlots(slots.filter((slot) => slot.date === selectedDate));
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 'Erro ao carregar horários';
+      const errorMessage = err.response?.data?.error || t('loadError');
       setError(errorMessage);
       showError(errorMessage);
     } finally {
@@ -91,19 +93,19 @@ export default function NewAppointment() {
   const handleNext = () => {
     setError('');
     if (step === 1 && !selectedService) {
-      setError('Selecione um serviço');
+      setError(t('serviceRequired'));
       return;
     }
     if (step === 2 && !selectedProvider) {
-      setError('Selecione um profissional');
+      setError(t('providerRequired'));
       return;
     }
     if (step === 3 && !selectedDate) {
-      setError('Selecione uma data');
+      setError(t('dateRequired'));
       return;
     }
     if (step === 4 && !selectedTime) {
-      setError('Selecione um horário');
+      setError(t('timeRequired'));
       return;
     }
     setStep(step + 1);
@@ -116,7 +118,7 @@ export default function NewAppointment() {
 
   const handleConfirm = async () => {
     if (!selectedProvider || !selectedDate || !selectedTime) {
-      setError('Complete todos os campos');
+      setError(t('completeAllFields'));
       return;
     }
 
@@ -130,14 +132,14 @@ export default function NewAppointment() {
         providerId: selectedProvider.id,
         startTime: startDateTime.toISOString(),
         duration,
-        serviceType: SERVICOS.find((s) => s.id === selectedService)?.nome,
-        title: `${SERVICOS.find((s) => s.id === selectedService)?.nome} - ${selectedProvider.name}`,
+        serviceType: selectedService ? t(SERVICOS.find((s) => s.id === selectedService)?.nomeKey || '') : undefined,
+        title: selectedService ? `${t(SERVICOS.find((s) => s.id === selectedService)?.nomeKey || '')} - ${selectedProvider.name}` : undefined,
       });
 
-      success('Agendamento criado com sucesso!');
+      success(t('appointmentCreated'));
       navigate('/agenda');
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 'Erro ao criar agendamento';
+      const errorMessage = err.response?.data?.error || t('createAppointmentError');
       setError(errorMessage);
       showError(errorMessage);
     } finally {
@@ -146,7 +148,7 @@ export default function NewAppointment() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
+    return new Date(dateString).toLocaleDateString(undefined, {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
@@ -168,7 +170,6 @@ export default function NewAppointment() {
   return (
     <div className="page-container max-w-4xl mx-auto">
       <div className="max-w-4xl mx-auto">
-        {/* Progress Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             {[1, 2, 3, 4, 5].map((s) => (
@@ -176,7 +177,7 @@ export default function NewAppointment() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                     step >= s
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-brand text-white'
                       : 'bg-gray-200 text-gray-600'
                   }`}
                 >
@@ -185,7 +186,7 @@ export default function NewAppointment() {
                 {s < 5 && (
                   <div
                     className={`flex-1 h-1 mx-2 ${
-                      step > s ? 'bg-blue-600' : 'bg-gray-200'
+                      step > s ? 'bg-brand' : 'bg-gray-200'
                     }`}
                   />
                 )}
@@ -193,15 +194,14 @@ export default function NewAppointment() {
             ))}
           </div>
           <div className="flex justify-between text-xs text-gray-600">
-            <span>Serviço</span>
-            <span>Profissional</span>
-            <span>Data</span>
-            <span>Horário</span>
-            <span>Confirmar</span>
+            <span>{t('service')}</span>
+            <span>{t('provider')}</span>
+            <span>{t('date')}</span>
+            <span>{t('time')}</span>
+            <span>{t('confirmAppointment')}</span>
           </div>
         </div>
 
-        {/* Content */}
         <Card className="p-8">
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
@@ -209,18 +209,17 @@ export default function NewAppointment() {
             </div>
           )}
 
-          {/* Step 1: Escolher Serviço */}
           {step === 1 && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Escolher Serviço
+                {t('chooseService')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {SERVICOS.map((servico) => (
                   <ServiceCard
                     key={servico.id}
-                    title={servico.nome}
-                    icon={servico.icon}
+                    title={t(servico.nomeKey)}
+                    icon=""
                     description=""
                     onClick={() => {
                       setSelectedService(servico.id);
@@ -230,26 +229,26 @@ export default function NewAppointment() {
                 ))}
               </div>
               {selectedService && (
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-700">
-                    Serviço selecionado: <strong>{SERVICOS.find((s) => s.id === selectedService)?.nome}</strong>
+                <div className="mt-6 p-4 bg-brand/5 border border-brand/20 rounded-lg">
+                  <p className="text-sm text-brand">
+                    {t('selectedService')}{' '}
+                    <strong>{t(SERVICOS.find((s) => s.id === selectedService)?.nomeKey || '')}</strong>
                   </p>
                 </div>
               )}
             </div>
           )}
 
-          {/* Step 2: Escolher Profissional */}
           {step === 2 && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Escolher Profissional
+                {t('chooseProvider')}
               </h2>
               {loading ? (
-                <div className="text-center py-8 text-gray-600">Carregando profissionais...</div>
+                <div className="text-center py-8 text-gray-600">{t('loadingSlots')}</div>
               ) : providers.length === 0 ? (
                 <div className="text-center py-8 text-gray-600">
-                  Nenhum profissional disponível
+                  {t('noProvidersAvailable')}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -262,7 +261,7 @@ export default function NewAppointment() {
                       }}
                       className={`p-6 cursor-pointer transition ${
                         selectedProvider?.id === provider.id
-                          ? 'border-2 border-blue-600 bg-blue-50'
+                          ? 'border-2 border-brand bg-brand/5'
                           : 'hover:shadow-md'
                       }`}
                     >
@@ -274,8 +273,8 @@ export default function NewAppointment() {
                             className="w-16 h-16 rounded-full"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span className="text-2xl font-bold text-blue-600">
+                          <div className="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center">
+                            <span className="text-2xl font-bold text-brand">
                               {provider.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
@@ -294,11 +293,10 @@ export default function NewAppointment() {
             </div>
           )}
 
-          {/* Step 3: Escolher Data */}
           {step === 3 && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Escolher Data
+                {t('chooseDate')}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {getAvailableDates().map((date) => (
@@ -310,15 +308,15 @@ export default function NewAppointment() {
                     }}
                     className={`p-4 border rounded-lg text-center transition ${
                       selectedDate === date
-                        ? 'border-blue-600 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 hover:border-blue-300'
+                        ? 'border-brand bg-brand/5 text-brand'
+                        : 'border-gray-300 hover:border-brand/30'
                     }`}
                   >
                     <div className="text-base font-medium">
-                      {new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                      {new Date(date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {new Date(date).toLocaleDateString('pt-BR', { weekday: 'short' })}
+                      {new Date(date).toLocaleDateString(undefined, { weekday: 'short' })}
                     </div>
                   </button>
                 ))}
@@ -326,22 +324,21 @@ export default function NewAppointment() {
             </div>
           )}
 
-          {/* Step 4: Escolher Horário */}
           {step === 4 && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Escolher Horário
+                {t('chooseTime')}
               </h2>
               {selectedDate && (
                 <p className="text-gray-600 mb-4">
-                  Data selecionada: <strong>{formatDate(selectedDate)}</strong>
+                  {t('selectedDateInfo')} <strong>{formatDate(selectedDate)}</strong>
                 </p>
               )}
               {loading ? (
-                <div className="text-center py-8 text-gray-600">Carregando horários...</div>
+                <div className="text-center py-8 text-gray-600">{t('loadingSlots')}</div>
               ) : timeSlots.length === 0 ? (
                 <div className="text-center py-8 text-gray-600">
-                  Nenhum horário disponível para esta data
+                  {t('noTimesForDate')}
                 </div>
               ) : (
                 <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
@@ -364,57 +361,51 @@ export default function NewAppointment() {
             </div>
           )}
 
-          {/* Step 5: Confirmar */}
           {step === 5 && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Confirmar Agendamento
+                {t('confirmAppointment')}
               </h2>
               <div className="space-y-4">
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">Serviço</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('service')}</p>
                   <p className="font-semibold text-gray-900">
-                    {SERVICOS.find((s) => s.id === selectedService)?.nome}
+                    {t(SERVICOS.find((s) => s.id === selectedService)?.nomeKey || '')}
                   </p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">Profissional</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('provider')}</p>
                   <p className="font-semibold text-gray-900">{selectedProvider?.name}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">Data</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('date')}</p>
                   <p className="font-semibold text-gray-900">
                     {selectedDate && formatDate(selectedDate)}
                   </p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">Horário</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('time')}</p>
                   <p className="font-semibold text-gray-900">{selectedTime}</p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-1">Duração</p>
-                  <p className="font-semibold text-gray-900">{duration} minutos</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('duration')}</p>
+                  <p className="font-semibold text-gray-900">{t('durationValue', { count: duration })}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Navigation Buttons */}
           <div className="mt-8 flex justify-between">
-            <Button
-              onClick={handleBack}
-              disabled={step === 1}
-              variant="secondary"
-            >
-              Voltar
+            <Button onClick={handleBack} disabled={step === 1} variant="secondary">
+              {t('back')}
             </Button>
             {step < 5 ? (
               <Button onClick={handleNext} isLoading={loading}>
-                Próximo
+                {t('next')}
               </Button>
             ) : (
               <Button onClick={handleConfirm} isLoading={loading}>
-                Confirmar Agendamento
+                {t('confirmAppointment')}
               </Button>
             )}
           </div>

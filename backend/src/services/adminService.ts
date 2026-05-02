@@ -26,15 +26,27 @@ export class AdminService {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    const appointmentsByMonth = await prisma.appointment.groupBy({
-      by: ['createdAt'],
+    const recentAppointments = await prisma.appointment.findMany({
       where: {
         createdAt: {
           gte: sixMonthsAgo,
         },
       },
-      _count: true,
+      select: {
+        createdAt: true,
+      },
     });
+
+    // Agrupa por mês em memória (ano-mês)
+    const byMonth: Record<string, number> = {};
+    for (const apt of recentAppointments) {
+      const key = apt.createdAt.toISOString().slice(0, 7); // "YYYY-MM"
+      byMonth[key] = (byMonth[key] || 0) + 1;
+    }
+    const appointmentsByMonth = Object.entries(byMonth).map(([month, count]) => ({
+      month,
+      count,
+    })).sort((a, b) => a.month.localeCompare(b.month));
 
     return {
       users: {

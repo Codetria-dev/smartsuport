@@ -6,10 +6,12 @@ import { AppError } from '../middleware/error.middleware';
 let transporter: nodemailer.Transporter | null = null;
 
 if (env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS) {
+  // SMTP_SECURE explícito no .env; fallback para porta 465 se não definido
+  const smtpSecure = env.SMTP_SECURE !== undefined ? env.SMTP_SECURE : env.SMTP_PORT === 465;
   transporter = nodemailer.createTransport({
     host: env.SMTP_HOST,
     port: env.SMTP_PORT ?? 587,
-    secure: env.SMTP_PORT === 465,
+    secure: smtpSecure,
     auth: {
       user: env.SMTP_USER,
       pass: env.SMTP_PASS,

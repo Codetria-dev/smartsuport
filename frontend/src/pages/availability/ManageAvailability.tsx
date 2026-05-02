@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { availabilityService } from '../../services/availabilityService';
 import { Availability, TimeSlot } from '../../types/appointment';
 import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFormValidation } from '../../hooks/useFormValidation';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import Loading from '../../components/ui/Loading';
 
 const DAY_KEYS = ['day0', 'day1', 'day2', 'day3', 'day4', 'day5', 'day6'] as const;
@@ -101,7 +99,7 @@ export default function ManageAvailability() {
     }
   }, [showSlots, daysToShow]);
 
-  const loadAvailabilities = async () => {
+  const loadAvailabilities = useCallback(async () => {
     try {
       setLoading(true);
       const data = await availabilityService.getMyAvailabilities();
@@ -111,7 +109,7 @@ export default function ManageAvailability() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,431 +233,413 @@ export default function ManageAvailability() {
     return <Loading fullScreen message={t('availability:loadingAvailability')} />;
   }
 
-  const selectClass =
-    'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent';
+  const selectStyle = {
+    width: '100%',
+    padding: '8px 12px',
+    border: '1px solid #d1d5db',
+    borderRadius: '8px',
+    fontSize: '14px',
+    color: '#111827',
+    backgroundColor: '#fff',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  };
+
+  const inputLabelStyle = {
+    display: 'block',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#374151',
+    marginBottom: '4px',
+  };
+
+  const cardStyle = {
+    backgroundColor: '#fff',
+    borderRadius: '12px',
+    border: '1px solid #f0ebe7',
+    padding: '24px',
+    marginBottom: '40px',
+  };
+
+  const btnPrimaryStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '44px',
+    padding: '10px 24px',
+    borderRadius: '10px',
+    backgroundColor: '#d64e38',
+    color: '#fff',
+    fontSize: '15px',
+    fontWeight: 500,
+    border: 'none',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  };
+
+  const btnSecondaryStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '44px',
+    padding: '10px 24px',
+    borderRadius: '10px',
+    backgroundColor: '#fff',
+    color: '#374151',
+    fontSize: '15px',
+    fontWeight: 500,
+    border: '1px solid #d1d5db',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  };
+
+  const btnSmallStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '40px',
+    padding: '8px 20px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: 500,
+    border: 'none',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-8">
-      {/* 1. Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-            {t('availability:manageAvailability')}
-          </h1>
-          <p className="text-gray-500 text-sm mb-6 sm:mb-0">
-            {t('availability:manageSubtitle')}
-          </p>
-        </div>
-        {!showForm && !editingId && (
-          <button
-            type="button"
-            onClick={() => setShowForm(true)}
-            className="shrink-0 min-h-[2.75rem] px-5 py-2.5 rounded-lg bg-gray-900 text-white text-base font-medium hover:bg-gray-800 transition-colors"
-          >
-            {t('availability:newAvailability')}
-          </button>
-        )}
-      </div>
+    <div style={{ minHeight: 'calc(100vh - 4rem)', background: 'linear-gradient(180deg, #fef6f2 0%, #f9fafb 100%)', padding: '40px 24px' }}>
+      <div style={{ width: '100%', maxWidth: '1024px', margin: '0 auto' }}>
 
-      {/* Form Nova Disponibilidade */}
-      {showForm && (
-        <div className="bg-white rounded-xl shadow border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {t('availability:newAvailability')}
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('availability:weekday')}
-                </label>
-                <select
-                  {...(getFieldProps('dayOfWeek') as unknown as React.SelectHTMLAttributes<HTMLSelectElement>)}
-                  className={`${selectClass} ${errors.dayOfWeek ? 'border-red-500' : ''}`}
-                >
-                  {daysOfWeek.map((day) => (
-                    <option key={day.value} value={day.value}>
-                      {day.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.dayOfWeek && (
-                  <p className="mt-1 text-sm text-red-600">{errors.dayOfWeek}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('availability:recurring')}
-                </label>
-                <select
-                  value={values.isRecurring ? 'true' : 'false'}
-                  onChange={(e) =>
-                    setFieldValue('isRecurring', e.target.value === 'true')
-                  }
-                  className={selectClass}
-                >
-                  <option value="true">{t('availability:recurringWeekly')}</option>
-                  <option value="false">{t('availability:recurringSpecific')}</option>
-                </select>
-              </div>
+        {/* ===== 1. HEADER ===== */}
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'rgba(214, 78, 56, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg style={{ width: '24px', height: '24px', color: '#d64e38' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                type="time"
-                {...getFieldProps('startTime')}
-                label={t('availability:startTime')}
-              />
-              <Input
-                type="time"
-                {...getFieldProps('endTime')}
-                label={t('availability:endTime')}
-              />
-            </div>
-            {!values.isRecurring && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input
-                  type="date"
-                  {...getFieldProps('startDate')}
-                  label={t('availability:startDate')}
-                />
-                <Input
-                  type="date"
-                  {...getFieldProps('endDate')}
-                  label={t('availability:endDate')}
-                />
-              </div>
-            )}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Input
-                type="number"
-                {...getFieldProps('slotDuration')}
-                label={t('availability:slotDuration')}
-                min={5}
-                max={480}
-              />
-              <Input
-                type="number"
-                {...getFieldProps('bufferTime')}
-                label={t('availability:buffer')}
-                min={0}
-                max={60}
-              />
-              <Input
-                type="number"
-                {...getFieldProps('maxBookingsPerSlot')}
-                label={t('availability:maxBookingsPerSlot')}
-                min={1}
-              />
-            </div>
-            <div className="flex gap-3 pt-2">
-              <Button type="submit" className="flex-1">
-                {t('availability:createAvailability')}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                className="flex-1"
-              >
-                {t('availability:cancel')}
-              </Button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* 2. Card Ver Horários Disponíveis */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          {t('availability:availableSlotsTitle')}
-        </h2>
-        <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={daysToShow}
-            onChange={(e) => setDaysToShow(parseInt(e.target.value))}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-            disabled={!showSlots}
-          >
-            <option value={7}>{t('availability:daysCount', { count: 7 })}</option>
-            <option value={14}>{t('availability:daysCount', { count: 14 })}</option>
-            <option value={30}>{t('availability:daysCount', { count: 30 })}</option>
-          </select>
-          <button
-            type="button"
-            onClick={() => {
-              setShowSlots(!showSlots);
-              if (!showSlots && user?.id) loadAvailableSlots();
-            }}
-            className="min-h-[2.75rem] px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-base font-medium hover:bg-gray-50 transition-colors"
-          >
-            {showSlots ? t('availability:hideSlots') : t('availability:viewAgenda')}
-          </button>
-        </div>
-
-        {showSlots && (
-          <div className="mt-4">
-            {loadingSlots ? (
-              <div className="py-8">
-                <Loading message={t('availability:loadingSlots')} />
-              </div>
-            ) : availableDates.length === 0 ? (
-              <p className="text-gray-500 text-sm py-6">
-                {t('availability:noSlotsConfigure')}
+            <div>
+              <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', letterSpacing: '-0.025em', margin: 0 }}>
+                {t('availability:manageAvailability')}
+              </h1>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                {t('availability:manageSubtitle')}
               </p>
-            ) : (
-              <div className="space-y-3 max-h-80 overflow-y-auto">
-                {availableDates.map((date) => {
-                  const dateObj = new Date(date);
-                  const dateStr = dateObj.toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  });
-                  const slots = slotsByDate[date].filter((s) => s.available);
-                  return (
-                    <div
-                      key={date}
-                      className="border border-gray-200 rounded-lg p-3 bg-gray-50"
-                    >
-                      <p className="font-medium text-gray-900 text-sm capitalize">
-                        {dateStr}
-                      </p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {slots.length > 0 ? (
-                          slots.map((slot) => (
-                            <span
-                              key={`${slot.date}-${slot.time}`}
-                              className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium"
-                            >
-                              {slot.time}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-gray-500 text-xs">
-                            {t('availability:noSlotsThisDay')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            </div>
           </div>
-        )}
-      </div>
+          {!showForm && !editingId && (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              style={btnPrimaryStyle}
+              onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(0.9)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
+            >
+              {t('availability:newAvailability')}
+            </button>
+          )}
+        </div>
 
-      {/* 3. Card Disponibilidades Configuradas */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          {t('availability:configuredTitle')}
-        </h2>
-        {availabilities.length === 0 ? (
-          <p className="text-gray-500 text-sm py-8 text-center">
-            {t('availability:noAvailability')}
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {grouped.map((group) => {
-              const first = group[0];
-              const dayLabel = t(`availability:${DAY_KEYS[first.dayOfWeek]}`);
-              return (
-                <div
-                  key={`${first.dayOfWeek}-${first.startTime}-${first.endTime}`}
-                  className="bg-gray-50 rounded-lg p-4 border border-gray-200"
-                >
-                  <div className="flex justify-between items-start gap-2 mb-3">
-                    <div>
-                      <p className="font-medium text-gray-900">{dayLabel}</p>
-                      <p className="text-sm text-gray-600 mt-0.5">
-                        {first.startTime} – {first.endTime}
-                      </p>
-                      {group.length > 1 && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          {t('availability:configurationsCount', { count: group.length })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    {group.map((availability, idx) => (
-                      <div
-                        key={availability.id}
-                        className={
-                          editingId === availability.id
-                            ? 'rounded-lg p-4 bg-white border-2 border-gray-900'
-                            : idx > 0
-                              ? 'pt-3 border-t border-gray-200'
-                              : ''
-                        }
-                      >
-                        {editingId === availability.id ? (
-                          <form
-                            onSubmit={(e) => {
-                              e.preventDefault();
-                              handleUpdate(availability.id);
-                            }}
-                            className="space-y-3"
-                          >
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">
-                                  {t('availability:dayOfWeek')}
-                                </label>
-                                <select
-                                  {...(getFieldProps('dayOfWeek') as unknown as React.SelectHTMLAttributes<HTMLSelectElement>)}
-                                  className={`${selectClass} ${errors.dayOfWeek ? 'border-red-500' : ''}`}
-                                >
-                                  {daysOfWeek.map((day) => (
-                                    <option key={day.value} value={day.value}>
-                                      {day.label}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                              <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">
-                                  {t('availability:recurring')}
-                                </label>
-                                <select
-                                  value={values.isRecurring ? 'true' : 'false'}
-                                  onChange={(e) =>
-                                    setFieldValue(
-                                      'isRecurring',
-                                      e.target.value === 'true'
-                                    )
-                                  }
-                                  className={selectClass}
-                                >
-                                  <option value="true">{t('availability:weekly')}</option>
-                                  <option value="false">{t('availability:specificDates')}</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <Input
-                                type="time"
-                                {...getFieldProps('startTime')}
-                                label={t('availability:startTimeShort')}
-                              />
-                              <Input
-                                type="time"
-                                {...getFieldProps('endTime')}
-                                label={t('availability:endTimeShort')}
-                              />
-                            </div>
-                            {!values.isRecurring && (
-                              <div className="grid grid-cols-2 gap-3">
-                                <Input
-                                  type="date"
-                                  {...getFieldProps('startDate')}
-                                  label={t('availability:startDateShort')}
-                                />
-                                <Input
-                                  type="date"
-                                  {...getFieldProps('endDate')}
-                                  label={t('availability:endDateShort')}
-                                />
-                              </div>
-                            )}
-                            <div className="grid grid-cols-3 gap-2">
-                              <Input
-                                type="number"
-                                {...getFieldProps('slotDuration')}
-                                label={t('availability:slotDurationShort')}
-                                min={5}
-                                max={480}
-                              />
-                              <Input
-                                type="number"
-                                {...getFieldProps('bufferTime')}
-                                label={t('availability:bufferShort')}
-                                min={0}
-                                max={60}
-                              />
-                              <Input
-                                type="number"
-                                {...getFieldProps('maxBookingsPerSlot')}
-                                label={t('availability:maxPerSlotShort')}
-                                min={1}
-                              />
-                            </div>
-                            <div className="flex gap-2 pt-2">
-                              <button
-                                type="submit"
-                                className="flex-1 min-h-[2.75rem] px-4 py-2.5 rounded-lg bg-gray-900 text-white text-base font-medium hover:bg-gray-800"
-                              >
-                                {t('availability:save')}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={cancelEdit}
-                                className="flex-1 min-h-[2.75rem] px-4 py-2.5 rounded-lg border border-gray-300 text-gray-600 text-base hover:bg-gray-100"
-                              >
-                                {t('availability:cancel')}
-                              </button>
-                            </div>
-                          </form>
-                        ) : (
-                          <div className="flex flex-wrap justify-between items-center gap-2">
-                            <div className="text-sm text-gray-600">
-                              <span>
-                                {t('availability:slotBufferInfo', {
-                                  slot: availability.slotDuration,
-                                  buffer: availability.bufferTime,
-                                })}
-                              </span>
-                              <span
-                                className={`ml-2 px-2 py-0.5 rounded text-xs font-medium ${
-                                  availability.isActive
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-gray-200 text-gray-700'
-                                }`}
-                              >
-                                {availability.isActive ? t('availability:active') : t('availability:inactive')}
-                              </span>
-                            </div>
-                            <div className="flex gap-2">
-                              <button
-                                type="button"
-                                onClick={() => startEdit(availability)}
-                                className="min-h-[2.5rem] px-4 py-2 rounded-lg bg-gray-200 text-gray-800 text-base font-medium hover:bg-gray-300 transition-colors"
-                              >
-                                {t('availability:edit')}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => toggleActive(availability)}
-                                disabled={togglingId === availability.id}
-                                className="min-h-[2.5rem] px-4 py-2 rounded-lg bg-yellow-100 text-yellow-800 text-base font-medium hover:bg-yellow-200 transition-colors disabled:opacity-50"
-                              >
-                                {availability.isActive ? t('availability:deactivate') : t('availability:activate')}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleDelete(availability.id)}
-                                disabled={deletingId === availability.id}
-                                className="min-h-[2.5rem] px-4 py-2 rounded-lg bg-red-500 text-white text-base font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-                              >
-                                {deletingId === availability.id
-                                  ? t('availability:deleting')
-                                  : t('availability:delete')}
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+        {/* ===== 2. FORM: New Availability ===== */}
+        {showForm && (
+          <div style={{ ...cardStyle }} key="new-form">
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>
+              {t('availability:newAvailability')}
+            </h2>
+            <form onSubmit={handleSubmit} noValidate>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:weekday')}</label>
+                  <select
+                    {...(getFieldProps('dayOfWeek') as unknown as React.SelectHTMLAttributes<HTMLSelectElement>)}
+                    style={{ ...selectStyle, borderColor: errors.dayOfWeek ? '#ef4444' : '#d1d5db' }}
+                  >
+                    {daysOfWeek.map((day) => (
+                      <option key={day.value} value={day.value}>{day.label}</option>
                     ))}
+                  </select>
+                  {errors.dayOfWeek && <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#dc2626' }}>{errors.dayOfWeek}</p>}
+                </div>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:recurring')}</label>
+                  <select
+                    value={values.isRecurring ? 'true' : 'false'}
+                    onChange={(e) => setFieldValue('isRecurring', e.target.value === 'true')}
+                    style={selectStyle}
+                  >
+                    <option value="true">{t('availability:recurringWeekly')}</option>
+                    <option value="false">{t('availability:recurringSpecific')}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:startTime')}</label>
+                  <input
+                    type="time"
+                    {...getFieldProps('startTime')}
+                    style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                  />
+                </div>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:endTime')}</label>
+                  <input
+                    type="time"
+                    {...getFieldProps('endTime')}
+                    style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                  />
+                </div>
+              </div>
+
+              {!values.isRecurring && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+                  <div>
+                    <label style={inputLabelStyle}>{t('availability:startDate')}</label>
+                    <input
+                      type="date"
+                      {...getFieldProps('startDate')}
+                      style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={inputLabelStyle}>{t('availability:endDate')}</label>
+                    <input
+                      type="date"
+                      {...getFieldProps('endDate')}
+                      style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                    />
                   </div>
                 </div>
-              );
-            })}
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginTop: '16px' }}>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:slotDuration')}</label>
+                  <input
+                    type="number"
+                    {...getFieldProps('slotDuration')}
+                    min={5}
+                    max={480}
+                    style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                  />
+                </div>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:buffer')}</label>
+                  <input
+                    type="number"
+                    {...getFieldProps('bufferTime')}
+                    min={0}
+                    max={60}
+                    style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                  />
+                </div>
+                <div>
+                  <label style={inputLabelStyle}>{t('availability:maxBookingsPerSlot')}</label>
+                  <input
+                    type="number"
+                    {...getFieldProps('maxBookingsPerSlot')}
+                    min={1}
+                    style={{ ...selectStyle, padding: '10px 12px', fontSize: '15px' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <button type="submit" style={{ ...btnPrimaryStyle, flex: 1 }}> {t('availability:createAvailability')} </button>
+                <button type="button" onClick={() => { setShowForm(false); resetForm(); }} style={{ ...btnSecondaryStyle, flex: 1 }}>
+                  {t('availability:cancel')}
+                </button>
+              </div>
+            </form>
           </div>
         )}
+
+        {/* ===== 3. CARD: Available Slots ===== */}
+        <div style={cardStyle}>
+          <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>
+            {t('availability:availableSlotsTitle')}
+          </h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
+            <select
+              value={daysToShow}
+              onChange={(e) => setDaysToShow(parseInt(e.target.value))}
+              disabled={!showSlots}
+              style={{ ...selectStyle, width: 'auto', opacity: !showSlots ? 0.5 : 1 }}
+            >
+              <option value={7}>{t('availability:daysCount', { count: 7 })}</option>
+              <option value={14}>{t('availability:daysCount', { count: 14 })}</option>
+              <option value={30}>{t('availability:daysCount', { count: 30 })}</option>
+            </select>
+            <button
+              type="button"
+              onClick={() => { setShowSlots(!showSlots); if (!showSlots && user?.id) loadAvailableSlots(); }}
+              style={btnPrimaryStyle}
+              onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(0.9)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
+            >
+              {showSlots ? t('availability:hideSlots') : t('availability:viewAgenda')}
+            </button>
+          </div>
+
+          {showSlots && (
+            <div style={{ marginTop: '16px' }}>
+              {loadingSlots ? (
+                <div style={{ padding: '32px 0' }}><Loading message={t('availability:loadingSlots')} /></div>
+              ) : availableDates.length === 0 ? (
+                <p style={{ color: '#6b7280', fontSize: '14px', padding: '24px 0', margin: 0 }}>
+                  {t('availability:noSlotsConfigure')}
+                </p>
+              ) : (
+                <div style={{ maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {availableDates.map((date) => {
+                    const dateObj = new Date(date);
+                    const dateStr = dateObj.toLocaleDateString('pt-BR', {
+                      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                    });
+                    const slots = slotsByDate[date].filter((s) => s.available);
+                    return (
+                      <div key={date} style={{ border: '1px solid #f0ebe7', borderRadius: '8px', padding: '12px', backgroundColor: 'rgba(214, 78, 56, 0.05)' }}>
+                        <p style={{ fontWeight: 500, color: '#111827', fontSize: '14px', margin: 0, textTransform: 'capitalize' }}>{dateStr}</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                          {slots.length > 0 ? slots.map((slot) => (
+                            <span key={`${slot.date}-${slot.time}`} style={{ padding: '4px 8px', backgroundColor: '#dcfce7', color: '#166534', borderRadius: '6px', fontSize: '12px', fontWeight: 500 }}>
+                              {slot.time}
+                            </span>
+                          )) : (
+                            <span style={{ color: '#6b7280', fontSize: '12px' }}>{t('availability:noSlotsThisDay')}</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ===== 4. CARD: Configured Availabilities ===== */}
+        <div style={cardStyle}>
+          <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>
+            {t('availability:configuredTitle')}
+          </h2>
+          {availabilities.length === 0 ? (
+            <p style={{ color: '#6b7280', fontSize: '14px', padding: '32px 0', textAlign: 'center', margin: 0 }}>
+              {t('availability:noAvailability')}
+            </p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              {grouped.map((group) => {
+                const first = group[0];
+                const dayLabel = t(`availability:${DAY_KEYS[first.dayOfWeek]}`);
+                return (
+                  <div key={`${first.dayOfWeek}-${first.startTime}-${first.endTime}`} style={{ backgroundColor: 'rgba(214, 78, 56, 0.05)', borderRadius: '8px', padding: '16px', border: '1px solid #f0ebe7' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
+                      <div>
+                        <p style={{ fontWeight: 500, color: '#111827', margin: 0 }}>{dayLabel}</p>
+                        <p style={{ fontSize: '14px', color: '#4b5563', margin: '2px 0 0 0' }}>
+                          {first.startTime} – {first.endTime}
+                        </p>
+                        {group.length > 1 && (
+                          <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                            {t('availability:configurationsCount', { count: group.length })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {group.map((availability, idx) => (
+                        <div key={availability.id} style={editingId === availability.id ? { borderRadius: '8px', padding: '16px', backgroundColor: '#fff', border: '2px solid #111827' } : idx > 0 ? { paddingTop: '12px', borderTop: '1px solid #d1d5db' } : {}}>
+                          {editingId === availability.id ? (
+                            <form onSubmit={(e) => { e.preventDefault(); handleUpdate(availability.id); }} noValidate>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:dayOfWeek')}</label>
+                                  <select {...(getFieldProps('dayOfWeek') as unknown as React.SelectHTMLAttributes<HTMLSelectElement>)} style={{ ...selectStyle, borderColor: errors.dayOfWeek ? '#ef4444' : '#d1d5db' }}>
+                                    {daysOfWeek.map((day) => (<option key={day.value} value={day.value}>{day.label}</option>))}
+                                  </select>
+                                </div>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:recurring')}</label>
+                                  <select value={values.isRecurring ? 'true' : 'false'} onChange={(e) => setFieldValue('isRecurring', e.target.value === 'true')} style={selectStyle}>
+                                    <option value="true">{t('availability:weekly')}</option>
+                                    <option value="false">{t('availability:specificDates')}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:startTimeShort')}</label>
+                                  <input type="time" {...getFieldProps('startTime')} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                </div>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:endTimeShort')}</label>
+                                  <input type="time" {...getFieldProps('endTime')} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                </div>
+                              </div>
+                              {!values.isRecurring && (
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
+                                  <div>
+                                    <label style={inputLabelStyle}>{t('availability:startDateShort')}</label>
+                                    <input type="date" {...getFieldProps('startDate')} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                  </div>
+                                  <div>
+                                    <label style={inputLabelStyle}>{t('availability:endDateShort')}</label>
+                                    <input type="date" {...getFieldProps('endDate')} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                  </div>
+                                </div>
+                              )}
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '12px' }}>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:slotDurationShort')}</label>
+                                  <input type="number" {...getFieldProps('slotDuration')} min={5} max={480} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                </div>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:bufferShort')}</label>
+                                  <input type="number" {...getFieldProps('bufferTime')} min={0} max={60} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                </div>
+                                <div>
+                                  <label style={inputLabelStyle}>{t('availability:maxPerSlotShort')}</label>
+                                  <input type="number" {...getFieldProps('maxBookingsPerSlot')} min={1} style={{ ...selectStyle, padding: '10px 12px' }} />
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                                <button type="submit" style={{ ...btnSmallStyle, flex: 1, backgroundColor: '#d64e38', color: '#fff' }}>{t('availability:save')}</button>
+                                <button type="button" onClick={cancelEdit} style={{ ...btnSmallStyle, flex: 1, border: '1px solid #d1d5db', backgroundColor: '#fff', color: '#374151' }}>{t('availability:cancel')}</button>
+                              </div>
+                            </form>
+                          ) : (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ fontSize: '14px', color: '#4b5563' }}>
+                                <span>
+                                  {t('availability:slotBufferInfo', { slot: availability.slotDuration, buffer: availability.bufferTime })}
+                                </span>
+                                <span style={{ marginLeft: '8px', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, backgroundColor: availability.isActive ? '#dcfce7' : '#e5e7eb', color: availability.isActive ? '#166534' : '#374151' }}>
+                                  {availability.isActive ? t('availability:active') : t('availability:inactive')}
+                                </span>
+                              </div>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button type="button" onClick={() => startEdit(availability)}
+                                  style={{ ...btnSmallStyle, border: '1px solid #d1d5db', backgroundColor: '#fff', color: '#374151' }}>{t('availability:edit')}</button>
+                                <button type="button" onClick={() => toggleActive(availability)} disabled={togglingId === availability.id}
+                                  style={{ ...btnSmallStyle, backgroundColor: '#fef9c3', color: '#a16207', border: '1px solid #facc15' }}>{availability.isActive ? t('availability:deactivate') : t('availability:activate')}</button>
+                                <button type="button" onClick={() => handleDelete(availability.id)} disabled={deletingId === availability.id}
+                                  style={{ ...btnSmallStyle, backgroundColor: '#fef2f2', color: '#b91c1c', border: '1px solid #fca5a5' }}>{deletingId === availability.id ? t('availability:deleting') : t('availability:delete')}</button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

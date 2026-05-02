@@ -27,5 +27,11 @@
   "loadingAgenda": "Carregando agenda...",
   "loadAgendaError": "Erro ao carregar agenda",
   "somethingWentWrong": "Algo deu errado",
-  "unexpectedError": "Ocorreu um erro inesperado. Por favor, tente novamente."
+  "unexpectedError": "Ocorreu um erro inesperado. Por favor, tente novamente.",
+  "demoModeBanner": "Você está vendo uma versão de demonstração do SmartSupport. Os dados são simulados e não são salvos na sua conta.",
+  "menu": "Menu",
+  "termsPageTitle": "Termos de Serviço",
+  "privacyPageTitle": "Política de Privacidade",
+  "supportPageTitle": "Suporte",
+  "supportSubtitle": "Estamos aqui para ajudar. Entre em contato conosco."
 }

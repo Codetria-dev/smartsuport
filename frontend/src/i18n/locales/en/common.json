@@ -27,5 +27,11 @@
   "loadingAgenda": "Loading agenda...",
   "loadAgendaError": "Error loading agenda",
   "somethingWentWrong": "Something went wrong",
-  "unexpectedError": "An unexpected error occurred. Please try again."
+  "unexpectedError": "An unexpected error occurred. Please try again.",
+  "demoModeBanner": "You're viewing a demo version of SmartSupport. Data is simulated and not saved to your account.",
+  "menu": "Menu",
+  "termsPageTitle": "Terms of Service",
+  "privacyPageTitle": "Privacy Policy",
+  "supportPageTitle": "Support",
+  "supportSubtitle": "We are here to help you. Get in touch with us."
 }

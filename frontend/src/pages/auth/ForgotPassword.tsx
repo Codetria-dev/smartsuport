@@ -88,10 +88,6 @@ export default function ForgotPassword() {
 
             <div className="saas-footer saas-footer-stacked">
               <Link to="/login">{t('auth:backToLoginLink')}</Link>
-              <p>
-                {t('auth:noAccount')}{' '}
-                <Link to="/register">{t('auth:createAccount')}</Link>
-              </p>
             </div>
           </>
         )}

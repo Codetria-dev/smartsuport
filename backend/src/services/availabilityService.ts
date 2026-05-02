@@ -2,6 +2,7 @@ import { Availability } from '@prisma/client';
 import { CreateAvailabilityInput, UpdateAvailabilityInput } from '../schemas/availability.schema';
 import { AppError } from '../middleware/error.middleware';
 import { prisma } from '../config/database';
+import { generateTimeSlots, timeToMinutes, combineDateTime } from '../utils/dateHelpers';
 
 export class AvailabilityService {
   /**
@@ -112,21 +113,26 @@ export class AvailabilityService {
   }
 
   /**
-   * Garante que um provider tenha disponibilidade padrão (para testes/demo)
-   * Cria Segunda a Sexta, 9h-18h, se não tiver nenhuma
+   * Cria disponibilidade padrão (Segunda a Sexta, 9h-17h) para um provider
+   * que ainda não tenha nenhuma disponibilidade configurada.
+   * Útil para onboarding — chamada explicitamente pelo provider.
    */
-  private async ensureDefaultAvailabilityForProvider(
+  async seedDefaultAvailabilities(
     providerId: string
   ): Promise<Availability[]> {
     const provider = await prisma.user.findUnique({
       where: { id: providerId, role: { in: ['PROVIDER', 'ADMIN'] } },
     });
-    if (!provider) return [];
+    if (!provider) {
+      throw new AppError('Provider não encontrado', 404);
+    }
 
     const existing = await prisma.availability.findMany({
       where: { providerId },
     });
-    if (existing.length > 0) return existing;
+    if (existing.length > 0) {
+      return existing;
+    }
 
     const daysOfWeek = [1, 2, 3, 4, 5]; // Segunda a Sexta
     const defaultData = {
@@ -157,14 +163,20 @@ export class AvailabilityService {
 
   /**
    * Calcula slots disponíveis de um provider em um período
+   * Nota: antes de chamar esta rota, o provider deve ter disponibilidades cadastradas
+   * (use POST /api/availability/seed para criar o padrão se necessário).
    */
   async getAvailableSlots(
     providerId: string,
     startDate: Date,
     endDate: Date
   ): Promise<Array<{ date: string; time: string; available: boolean }>> {
-    // Garante que o provider tenha disponibilidade (cria padrão se não tiver)
-    const availabilities = await this.ensureDefaultAvailabilityForProvider(providerId);
+    const availabilities = await prisma.availability.findMany({
+      where: {
+        providerId,
+        isActive: true,
+      },
+    });
 
     if (availabilities.length === 0) {
       return [];
@@ -190,7 +202,7 @@ export class AvailabilityService {
     // Itera por cada dia no período
     while (currentDate <= endDate) {
       const dayOfWeek = currentDate.getDay();
-      
+
       // Encontra disponibilidades para este dia da semana
       const dayAvailabilities = availabilities.filter(
         (av) => av.dayOfWeek === dayOfWeek
@@ -208,7 +220,7 @@ export class AvailabilityService {
         }
 
         // Gera slots para este dia
-        const timeSlots = this.generateTimeSlots(
+        const timeSlots = generateTimeSlots(
           availability.startTime,
           availability.endTime,
           availability.slotDuration,
@@ -220,9 +232,9 @@ export class AvailabilityService {
         const m = String(currentDate.getMonth() + 1).padStart(2, '0');
         const d = String(currentDate.getDate()).padStart(2, '0');
         const dateStr = `${y}-${m}-${d}`;
-        
+
         for (const timeSlot of timeSlots) {
-          const slotDateTime = this.combineDateTime(currentDate, timeSlot);
+          const slotDateTime = combineDateTime(currentDate, timeSlot);
           const slotEndDateTime = new Date(
             slotDateTime.getTime() + availability.slotDuration * 60000
           );
@@ -258,57 +270,6 @@ export class AvailabilityService {
       seen.add(key);
       return true;
     });
-  }
-
-  /**
-   * Gera slots de tempo
-   */
-  private generateTimeSlots(
-    startTime: string,
-    endTime: string,
-    slotDuration: number,
-    bufferTime: number
-  ): string[] {
-    const slots: string[] = [];
-    let currentTime = startTime;
-
-    const startMinutes = this.timeToMinutes(startTime);
-    const endMinutes = this.timeToMinutes(endTime);
-
-    while (this.timeToMinutes(currentTime) + slotDuration <= endMinutes) {
-      slots.push(currentTime);
-      const nextSlot = this.timeToMinutes(currentTime) + slotDuration + bufferTime;
-      currentTime = this.minutesToTime(nextSlot);
-    }
-
-    return slots;
-  }
-
-  /**
-   * Converte HH:mm para minutos
-   */
-  private timeToMinutes(time: string): number {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  }
-
-  /**
-   * Converte minutos para HH:mm
-   */
-  private minutesToTime(minutes: number): string {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-  }
-
-  /**
-   * Combina data e hora
-   */
-  private combineDateTime(date: Date, time: string): Date {
-    const [hours, minutes] = time.split(':').map(Number);
-    const result = new Date(date);
-    result.setHours(hours, minutes, 0, 0);
-    return result;
   }
 }
 

@@ -2,13 +2,24 @@ import OpenAI from 'openai';
 import { env } from '../config/env';
 import { AppError } from '../middleware/error.middleware';
 
-// Inicializa OpenAI apenas se a chave estiver configurada
+// Inicializa OpenAI apenas se a chave global estiver configurada
 let openai: OpenAI | null = null;
 
 if (env.OPENAI_API_KEY) {
   openai = new OpenAI({
     apiKey: env.OPENAI_API_KEY,
   });
+}
+
+/** Cria um client OpenAI com a chave fornecida ou a global */
+function getClient(apiKey?: string): OpenAI {
+  if (apiKey) {
+    return new OpenAI({ apiKey });
+  }
+  if (openai) {
+    return openai;
+  }
+  throw new AppError('OpenAI não configurado. Forneça uma OPENAI_API_KEY no .env ou configure sua chave nas configurações de IA.', 500);
 }
 
 export class OpenAIService {
@@ -21,13 +32,10 @@ export class OpenAIService {
     appointmentDate: string;
     message?: string;
     customPrompt?: string;
+    apiKey?: string; // chave descriptografada do usuário (opcional)
   }): Promise<string> {
-    if (!openai) {
-      // Se OpenAI não estiver configurado, retorna resposta básica
-      return `Olá ${context.clientName}! Confirmamos seu agendamento para ${context.appointmentDate}. Estamos ansiosos para atendê-lo!`;
-    }
-
     try {
+      const client = getClient(context.apiKey);
       const prompt = context.customPrompt || `Você é um assistente de agendamento profissional e amigável.
 Gere uma resposta automática para confirmar um agendamento.
 
@@ -37,7 +45,7 @@ ${context.message ? `Mensagem do cliente: ${context.message}` : ''}
 
 Gere uma resposta profissional, amigável e concisa em português brasileiro.`;
 
-      const completion = await openai.chat.completions.create({
+      const completion = await client.chat.completions.create({
         model: 'gpt-4',
         messages: [
           {
@@ -68,13 +76,10 @@ Gere uma resposta profissional, amigável e concisa em português brasileiro.`;
     duration: number;
     preferredTimes?: string[];
     existingAppointments?: Array<{ start: Date; end: Date }>;
+    apiKey?: string; // chave descriptografada do usuário (opcional)
   }): Promise<string[]> {
-    if (!openai) {
-      // Se OpenAI não estiver configurado, retorna horários básicos
-      return ['09:00', '10:00', '14:00', '15:00'];
-    }
-
     try {
+      const client = getClient(preferences.apiKey);
       const prompt = `Analise as preferências de agendamento e sugira os melhores horários disponíveis.
 
 Período: ${preferences.dateRange.start.toLocaleDateString('pt-BR')} até ${preferences.dateRange.end.toLocaleDateString('pt-BR')}
@@ -84,7 +89,7 @@ ${preferences.existingAppointments ? `Agendamentos existentes: ${preferences.exi
 
 Sugira 4-6 horários ideais no formato HH:MM, um por linha.`;
 
-      const completion = await openai.chat.completions.create({
+      const completion = await client.chat.completions.create({
         model: 'gpt-4',
         messages: [
           {
@@ -118,16 +123,14 @@ Sugira 4-6 horários ideais no formato HH:MM, um por linha.`;
   /**
    * Analisa sentimento de uma mensagem
    */
-  async analyzeSentiment(text: string): Promise<{
+  async analyzeSentiment(text: string, apiKey?: string): Promise<{
     sentiment: 'positive' | 'neutral' | 'negative';
     score: number;
   }> {
-    if (!openai) {
-      return { sentiment: 'neutral', score: 0.5 };
-    }
-
     try {
-      const completion = await openai.chat.completions.create({
+      const client = getClient(apiKey);
+
+      const completion = await client.chat.completions.create({
         model: 'gpt-4',
         messages: [
           {

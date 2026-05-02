@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { availabilityService } from '../../services/availabilityService';
 import { TimeSlot } from '../../types/appointment';
+import StepIndicator from '../../components/ui/StepIndicator';
+
 export default function PublicBookAppointment() {
   const { providerId } = useParams<{ providerId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation('public');
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+  const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
 
   useEffect(() => {
     if (providerId) {
@@ -23,7 +27,7 @@ export default function PublicBookAppointment() {
       setLoading(true);
       const startDate = new Date();
       const endDate = new Date();
-      endDate.setDate(endDate.getDate() + 30); // Próximos 30 dias
+      endDate.setDate(endDate.getDate() + 30);
 
       const data = await availabilityService.getAvailableSlots(
         providerId,
@@ -32,7 +36,7 @@ export default function PublicBookAppointment() {
       );
       setSlots(data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao carregar horários disponíveis');
+      setError(err.response?.data?.error || t('createError'));
     } finally {
       setLoading(false);
     }
@@ -42,8 +46,6 @@ export default function PublicBookAppointment() {
     navigate(`/book/${providerId}/dados`, { state: { date, time } });
   };
 
-
-  // Agrupa slots por data
   const slotsByDate = slots.reduce((acc, slot) => {
     if (!acc[slot.date]) {
       acc[slot.date] = [];
@@ -56,44 +58,105 @@ export default function PublicBookAppointment() {
 
   const availableDates = Object.keys(slotsByDate).sort();
 
+  const pageStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+  };
+
+  const containerStyle = {
+    maxWidth: '896px',
+    margin: '0 auto',
+    padding: '40px 24px',
+  };
+
+  const cardStyle = {
+    background: '#fff',
+    borderRadius: '12px',
+    border: '1px solid #f0ebe7',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    padding: '32px',
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-brand border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg text-gray-700">Carregando horários disponíveis...</p>
+      <div style={{ ...pageStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '4px solid #d64e38',
+            borderTopColor: 'transparent',
+            borderRadius: '50%',
+            margin: '0 auto 20px',
+            animation: 'spin 0.8s linear infinite',
+          }} />
+          <p style={{ fontSize: '16px', color: '#6b7280', fontWeight: 500, margin: 0 }}>
+            {t('loadingSlots')}
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
-      <div className="max-w-6xl mx-auto">
-        <section className="mb-8">
-          <h1 className="page-title text-2xl md:text-3xl">Agendar Horário</h1>
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <div style={{ marginBottom: '40px' }}>
+          <StepIndicator
+            currentStep={1}
+            steps={[t('stepProfessional'), t('stepDateTime'), t('stepYourData')]}
+          />
+        </div>
+
+        <section style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: 0 }}>
+            {t('bookTitle')}
+          </h1>
+          <p style={{ fontSize: '16px', color: '#6b7280', marginTop: '4px' }}>
+            {t('clickToContinue')}
+          </p>
         </section>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+          <div style={{
+            marginBottom: '32px',
+            padding: '16px',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            color: '#b91c1c',
+            borderRadius: '12px',
+            fontSize: '14px',
+          }}>
             {error}
           </div>
         )}
 
         {availableDates.length === 0 ? (
-          <div className="content-card text-center py-8">
-            <p className="text-gray-600">Não há horários disponíveis no momento. Tente novamente mais tarde.</p>
+          <div style={{ ...cardStyle, padding: '40px', textAlign: 'center', maxWidth: '512px', margin: '0 auto' }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              background: 'rgba(214,78,56,0.1)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+            }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d64e38" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>
+              {t('noSlotsAvailable')}
+            </p>
           </div>
         ) : (
-          <div className="content-card mt-6">
-            <h2 className="section-title text-lg font-semibold mb-4 text-gray-900">Selecione Data e Horário</h2>
-            <p className="text-sm text-gray-500 mb-6">
-              Clique em um horário para continuar
-            </p>
-            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+          <div style={{ ...cardStyle, padding: '24px 32px' }}>
+            <div style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '8px' }}>
               {availableDates.map((date) => {
                 const dateObj = new Date(date);
-                const dateStr = dateObj.toLocaleDateString('pt-BR', {
+                const dateStr = dateObj.toLocaleDateString(undefined, {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -101,20 +164,53 @@ export default function PublicBookAppointment() {
                 });
 
                 return (
-                  <div key={date} className="border-b border-gray-200 pb-4 last:border-0">
-                    <h3 className="font-semibold text-gray-900 mb-2 capitalize">
+                  <div key={date} style={{
+                    borderBottom: '1px solid #f3f4f6',
+                    paddingBottom: '20px',
+                    marginBottom: '20px',
+                  }}>
+                    <h3 style={{
+                      fontWeight: 600,
+                      color: '#111827',
+                      marginBottom: '12px',
+                      textTransform: 'capitalize',
+                      fontSize: '16px',
+                      margin: '0 0 12px 0',
+                    }}>
                       {dateStr}
                     </h3>
-                    <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-                      {slotsByDate[date].map((slot) => (
-                        <button
-                          key={`${slot.date}-${slot.time}`}
-                          onClick={() => handleSlotSelect(slot.date, slot.time)}
-                          className="min-h-[2.5rem] px-3 py-2.5 rounded text-base transition-colors bg-gray-100 text-gray-700 hover:bg-brand hover:text-white"
-                        >
-                          {slot.time}
-                        </button>
-                      ))}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gap: '10px',
+                    }}>
+                      {slotsByDate[date].map((slot) => {
+                        const slotKey = `${slot.date}-${slot.time}`;
+                        const isHovered = hoveredSlot === slotKey;
+                        return (
+                          <button
+                            key={slotKey}
+                            onClick={() => handleSlotSelect(slot.date, slot.time)}
+                            style={{
+                              minHeight: '44px',
+                              padding: '10px 12px',
+                              borderRadius: '10px',
+                              fontSize: '14px',
+                              fontWeight: 500,
+                              border: isHovered ? '1.5px solid #d64e38' : '1.5px solid #e5e7eb',
+                              background: isHovered ? '#d64e38' : '#f9fafb',
+                              color: isHovered ? '#fff' : '#374151',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              transform: isHovered ? 'scale(0.97)' : 'scale(1)',
+                            }}
+                            onMouseEnter={() => setHoveredSlot(slotKey)}
+                            onMouseLeave={() => setHoveredSlot(null)}
+                          >
+                            {slot.time}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -122,13 +218,32 @@ export default function PublicBookAppointment() {
             </div>
           </div>
         )}
-        <div className="mt-8 pt-6 text-left">
+
+        {/* Rodapé — Voltar */}
+        <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #f0ebe7', textAlign: 'center' }}>
           <button
             type="button"
             onClick={() => navigate('/select-provider')}
-            className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '14px',
+              color: '#6b7280',
+              fontWeight: 500,
+              cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#d64e38')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#6b7280')}
           >
-            ← Voltar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {t('back')}
           </button>
         </div>
       </div>

@@ -1,5 +1,11 @@
 import { api } from './api';
 import { Profile, RegisterData, LoginCredentials } from '../types/auth.types';
+import { storage } from '../utils/storage';
+import {
+  getDemoProfile,
+  applyDemoProfileUpdate,
+  registerDemoClient,
+} from '../demo/demoData';
 
 export const authService = {
   /**
@@ -14,6 +20,9 @@ export const authService = {
    * Cadastra um novo cliente (apenas profissional/admin no painel)
    */
   async registerClient(data: { name: string; email: string; password: string; phone?: string }) {
+    if (storage.isDemoMode()) {
+      return { client: registerDemoClient(data) };
+    }
     const response = await api.post('/api/auth/register-client', data);
     return response.data;
   },
@@ -54,6 +63,9 @@ export const authService = {
    * Obtém perfil do usuário logado
    */
   async getProfile(): Promise<Profile> {
+    if (storage.isDemoMode()) {
+      return Promise.resolve(getDemoProfile());
+    }
     const response = await api.get('/api/auth/me');
     return response.data;
   },
@@ -62,6 +74,9 @@ export const authService = {
    * Atualiza perfil do usuário logado
    */
   async updateProfile(data: Partial<Profile>): Promise<Profile> {
+    if (storage.isDemoMode()) {
+      return Promise.resolve(applyDemoProfileUpdate(data));
+    }
     const response = await api.put('/api/auth/me', data);
     return response.data;
   },

@@ -54,32 +54,32 @@ export const billingController = {
 /** Handler async puro do webhook (para uso com express.raw em app.ts) */
 export async function stripeWebhookHandler(req: Request, res: Response): Promise<void> {
   const signature = req.headers['stripe-signature'] as string | undefined;
-  let event: Stripe.Event;
 
-  if (env.STRIPE_WEBHOOK_SECRET && signature) {
-    const rawBody = req.body as Buffer | string;
-    if (!rawBody) {
-      throw new AppError('Webhook body vazio', 400);
-    }
-    try {
-      event = stripeService.constructWebhookEvent(
-        typeof rawBody === 'string' ? Buffer.from(rawBody) : rawBody,
-        signature,
-        env.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err: any) {
-      throw new AppError(`Webhook signature verification failed: ${err.message}`, 400);
-    }
-  } else {
-    const rawBody = req.body as Buffer | string;
-    if (!rawBody) {
-      throw new AppError('Webhook body vazio', 400);
-    }
-    const body = typeof rawBody === 'string' ? rawBody : rawBody.toString('utf8');
-    event = JSON.parse(body) as Stripe.Event;
-    if (!event?.type) {
-      throw new AppError('Webhook inválido (sem type). Configure STRIPE_WEBHOOK_SECRET em produção.', 400);
-    }
+  if (!env.STRIPE_WEBHOOK_SECRET) {
+    throw new AppError(
+      'STRIPE_WEBHOOK_SECRET não configurado. O webhook não pode ser verificado.',
+      500
+    );
+  }
+
+  if (!signature) {
+    throw new AppError('stripe-signature header ausente', 400);
+  }
+
+  const rawBody = req.body as Buffer | string;
+  if (!rawBody) {
+    throw new AppError('Webhook body vazio', 400);
+  }
+
+  let event: Stripe.Event;
+  try {
+    event = stripeService.constructWebhookEvent(
+      typeof rawBody === 'string' ? Buffer.from(rawBody) : rawBody,
+      signature,
+      env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err: any) {
+    throw new AppError(`Webhook signature verification failed: ${err.message}`, 400);
   }
 
   await stripeService.handleWebhook(event);

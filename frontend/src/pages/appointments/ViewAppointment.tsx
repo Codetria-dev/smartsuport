@@ -19,6 +19,8 @@ export default function ViewAppointment() {
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -54,15 +56,18 @@ export default function ViewAppointment() {
     }
   };
 
-  const handleCancel = async () => {
-    if (!id) return;
-    const reason = prompt(t('appointments:cancelPrompt'));
-    if (reason === null) return;
+  const handleCancelClick = () => {
+    setCancelReason('');
+    setShowCancelDialog(true);
+  };
 
+  const handleConfirmCancel = async () => {
+    if (!id) return;
     try {
       setCancelling(true);
-      await appointmentService.cancelAppointment(id, reason || undefined);
+      await appointmentService.cancelAppointment(id, cancelReason.trim() || undefined);
       success(t('appointments:cancelSuccess'));
+      setShowCancelDialog(false);
       loadAppointment();
     } catch (err: any) {
       showError(err.response?.data?.error || t('appointments:cancelError'));
@@ -165,12 +170,35 @@ export default function ViewAppointment() {
                     {t('common:confirm')}
                   </Button>
                 )}
-                <Button variant="danger" onClick={handleCancel} isLoading={cancelling}>
+                <Button variant="danger" onClick={handleCancelClick} isLoading={cancelling}>
                   {t('common:cancel')}
                 </Button>
               </div>
             )}
         </div>
+
+        {showCancelDialog && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm font-medium text-red-800 mb-3">
+              {t('appointments:cancelPrompt')}
+            </p>
+            <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand mb-3"
+              rows={2}
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder={t('appointments:cancelPrompt')}
+            />
+            <div className="flex gap-3">
+              <Button variant="danger" onClick={handleConfirmCancel} isLoading={cancelling}>
+                {t('common:cancel')}
+              </Button>
+              <Button variant="secondary" onClick={() => setShowCancelDialog(false)}>
+                {t('common:close')}
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -179,7 +207,7 @@ export default function ViewAppointment() {
               <div>
                 <span className="text-sm font-medium text-gray-500">{t('appointments:date')}</span>
                 <p className="text-gray-900">
-                  {startDate.toLocaleDateString('pt-BR', {
+                  {startDate.toLocaleDateString(undefined, {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -190,12 +218,12 @@ export default function ViewAppointment() {
               <div>
                 <span className="text-sm font-medium text-gray-500">{t('appointments:time')}</span>
                 <p className="text-gray-900">
-                  {startDate.toLocaleTimeString('pt-BR', {
+                  {startDate.toLocaleTimeString(undefined, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}{' '}
                   -{' '}
-                  {endDate.toLocaleTimeString('pt-BR', {
+                  {endDate.toLocaleTimeString(undefined, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}

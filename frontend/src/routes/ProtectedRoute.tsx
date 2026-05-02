@@ -23,6 +23,7 @@ export function ProtectedRoute({
     );
   }
 
+  /* Demo: enterDemo sets user + localStorage; isAuthenticated is true */
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
   }

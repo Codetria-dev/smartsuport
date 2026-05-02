@@ -1,5 +1,6 @@
 {
   "heroTitle": "Agendamento online simples e profissional",
+  "heroBadge": "Smart Support",
   "heroSubtitle": "Permita que seus clientes agendem serviços em minutos, sem complicação.",
   "heroCtaPrimary": "Agendar um horário",
   "heroCtaSecondary": "Criar conta profissional",
@@ -26,5 +27,6 @@
   "ariaProductPreview": "Preview do dashboard {{n}}",
   "ariaStatistics": "Estatísticas",
   "ariaFeatures": "Recursos",
-  "ariaCallToAction": "Chamada para ação"
+  "ariaCallToAction": "Chamada para ação",
+  "viewDemo": "Ver demonstração"
 }

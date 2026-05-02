@@ -1,48 +1,35 @@
-# SmartSupport — SaaS Scheduling Platform
+# SmartSupport
 
-SmartSupport is a full-stack SaaS scheduling platform designed for service providers and clients.
+SmartSupport is a full-stack SaaS scheduling platform designed for service providers and their clients.
 
-The system allows professionals to manage availability and appointments while enabling clients to book services with or without an account.
+It enables real-time availability management, public booking flows, role-based dashboards, and scalable business logic for service operations.
 
-The project was built with a modern production-ready architecture including authentication, role-based access control, public booking flows, and scalable backend design.
-
----
-
-## Live Demo
-
-*(Add after deployment)*
-
-| Service | URL |
-|---------|-----|
-| **Frontend** | https://yourdomain.com |
-| **API** | https://api.yourdomain.com |
+This repository contains both the backend API and the frontend application, structured for production-readiness and incremental evolution (billing, email automation, AI features).
 
 ---
 
-## Screenshots
+## Overview
 
-Screenshots are stored in [`docs/`](./docs).
+SmartSupport solves a common operational problem: fragmented scheduling and poor client management for service providers.
 
-| Preview | Description |
-|---------|-------------|
-| ![Dashboard](./docs/dashboard.png) | Dashboard overview |
-| ![Booking](./docs/booking.png) | Public booking flow |
-| ![Availability](./docs/Availability.png) | Availability management |
-| ![Plans](./docs/Plans.png) | Subscription plans |
-| ![Profile](./docs/Profile.png) | User profile |
+The platform centralizes:
+
+- Availability configuration
+- Appointment booking (including public flows)
+- Role-based access control
+- Client management
+- Business scalability (plans, billing, integrations)
 
 ---
 
-## Architecture
+## Repository Structure
 
 ```
-smartsupport/
-│
-├── backend/        Node.js + Express + TypeScript API
-├── frontend/       React + Vite + TypeScript
-├── docs/           Screenshots
-│
-└── README.md
+smartsuport/
+├── backend/        Node.js API (Express, Prisma, PostgreSQL)
+├── frontend/       React SPA (Vite, TypeScript, Tailwind)
+├── docs/           Visual assets and references (optional)
+└── README.md       Project documentation
 ```
 
 ---
@@ -51,15 +38,13 @@ smartsupport/
 
 ### Backend
 
-- Node.js
-- Express
+- Node.js + Express
 - TypeScript
 - Prisma ORM
-- SQLite (development)
-- PostgreSQL (production ready)
-- JWT Authentication
-- Bcrypt
-- Zod Validation
+- PostgreSQL
+- JWT (access & refresh tokens)
+- bcrypt
+- Zod (validation)
 
 ### Frontend
 
@@ -68,133 +53,90 @@ smartsupport/
 - Vite
 - React Router
 - Axios
-- TailwindCSS
+- Tailwind CSS
+- i18next (internationalization: pt/en)
 
 ---
 
 ## Core Features
 
-### Authentication
+### Authentication & Security
 
-- User registration
-- Login and logout
-- JWT authentication
-- Refresh tokens
-- Password reset via token
-- Profile management
-- Password change
+- JWT-based authentication (access + refresh tokens)
+- Password recovery and update flows
+- Role-based authorization (RBAC)
 
-### Roles
+### Role System
 
-The system supports role-based access:
+| Role | Responsibility |
+|------|----------------|
+| **ADMIN** | Platform management |
+| **PROVIDER** | Manages availability, clients, and appointments |
+| **CLIENT** | Books and manages appointments |
 
-| Role | Description |
-|------|-------------|
-| **ADMIN** | System administration and user management |
-| **PROVIDER** | Availability and appointment management |
-| **CLIENT** | Booking and appointment management |
+### Scheduling System
 
-### Public Booking Flow
+- Public booking (no account required)
+- Token-based booking management
+- Slot generation based on availability rules
+- Confirmation and cancellation flows
 
-Clients can book appointments without creating an account.
+### Availability Engine
 
-**Flow**
+- Weekly recurring schedules
+- Slot duration configuration
+- Buffer time between appointments
+- Real-time slot preview
 
-1. Select provider
-2. Select date and time
-3. Create appointment
-4. Receive confirmation link
-5. Manage appointment using token
+### Client Management
 
-**Includes**
+- Provider-side client registration
+- Client listing and relationship tracking
 
-- Public provider listing
-- Available time slots API
-- Booking validation
-- Conflict prevention
-- Confirmation via public token
+### Plans & Billing (Extensible)
 
-### Appointment System
-
-**Features**
-
-- Create appointments
-- Edit appointments
-- Cancel appointments
-- Confirm appointments
-- Appointment tracking
-
-**Statuses**
-
-`PENDING` · `CONFIRMED` · `CANCELLED` · `COMPLETED` · `NO_SHOW`
-
-### Availability Management
-
-Providers can configure:
-
-- Weekly availability
-- Time slots
-- Slot duration
-- Buffers between appointments
-- Exceptions
+- Plan structure: **FREE**, **SMART**, **PRO**
+- Backend-ready for billing integration (e.g., Stripe)
 
 ### Admin Panel
 
-Admin dashboard includes:
+- User and system overview
+- Metrics and operational visibility (based on current implementation)
 
-- User management
-- Role management
-- Activation and deactivation
-- System metrics
+### AI Integration (Optional / Extensible)
 
-### AI Integration
-
-SmartSupport supports AI configuration per provider.
-
-**Configuration**
-
-- API key
-- Model
-- AI behavior
-
-**Features**
-
-- Automatic responses
-- Smart scheduling suggestions
-
-### Plans System
-
-**Plan structure**
-
-- **FREE**
-- **PRO**
-
-The architecture supports plan-based limitations.
+- Per-user configuration
+- Designed for future automation and intelligent scheduling features
 
 ---
 
-## API Structure
+## Demo Mode (Frontend)
 
-```
-/api/auth
-/api/appointments
-/api/availability
-/api/admin
-/api/ai
-/api/billing
-```
+The frontend includes a demo mode designed for product presentation and portfolio use.
+
+**Key characteristics:**
+
+- Activated via landing page or login screen
+- Uses `localStorage` to simulate authentication state
+- Bypasses backend dependency
+- Data is mocked at the service layer
+- Fully navigable interface without real credentials
+
+This allows the application to be demonstrated even when the backend is unavailable.
 
 ---
 
-## Installation
+## Getting Started
 
 ### Requirements
 
-- Node.js 18+
-- npm or yarn
-- No external database is required for development. SQLite is used by default.
+- Node.js ≥ 18
+- npm
+- PostgreSQL (local or remote)
 
-### Backend Setup
+### Installation
+
+#### Backend
 
 ```bash
 cd backend
@@ -202,27 +144,23 @@ npm install
 cp .env.example .env
 ```
 
-Generate Prisma client:
+Configure:
+
+- `DATABASE_URL`
+- `JWT_SECRET`
+- CORS and frontend URLs
+
+Then:
 
 ```bash
 npm run prisma:generate
-```
-
-Run migrations:
-
-```bash
 npm run prisma:migrate
-```
-
-Start backend:
-
-```bash
 npm run dev
 ```
 
-Backend runs at: **http://localhost:3000**
+**Default:** http://localhost:3000
 
-### Frontend Setup
+#### Frontend
 
 ```bash
 cd frontend
@@ -230,13 +168,17 @@ npm install
 cp .env.example .env
 ```
 
-Start frontend:
+Configure:
+
+- `VITE_API_URL` (or use Vite proxy)
+
+Run:
 
 ```bash
 npm run dev
 ```
 
-Frontend runs at: **http://localhost:5173**
+**Default:** http://localhost:5173
 
 ---
 
@@ -244,111 +186,93 @@ Frontend runs at: **http://localhost:5173**
 
 ### Backend
 
-**Required**
+**Required:**
 
-```env
-# URL do PostgreSQL. Produção: variável do host. Local: defina no backend/.env.
-# Exemplo (ajuste para o seu ambiente)
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB?schema=public"
-JWT_SECRET="your-secret"
-JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
-JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
-```
+- `DATABASE_URL`
+- `JWT_SECRET`
 
-**Optional**
+**Recommended:**
 
-```env
-# CORS/Front-end (ajuste para o seu domínio)
-CORS_ORIGIN="http://localhost:5173"
-FRONTEND_URL="http://localhost:5173"
+- `CORS_ORIGIN`
+- `FRONTEND_URL`
 
-STRIPE_SECRET_KEY=
-SMTP_HOST=
-SMTP_USER=
-SMTP_PASS=
-OPENAI_API_KEY=
-```
+**Optional integrations:**
 
-### Authentication Flow
+- `STRIPE_*`
+- `SMTP_*`
+- `OPENAI_API_KEY`
 
-1. User logs in
-2. Backend returns Access Token and Refresh Token
-3. Frontend stores tokens
-4. Requests include Access Token
-5. Refresh Token renews expired tokens
+See: `backend/.env.example`
+
+### Frontend
+
+- `VITE_API_URL` (API base URL without `/api`)
+
+See: `frontend/.env.example`
 
 ---
 
-## Data Models
+## API Overview
 
-### User
+**Base prefix:** `/api`
 
-`id` · `email` · `password` (hashed) · `role` · `plan` · `createdAt`
+| Domain | Endpoints |
+|--------|-----------|
+| Auth | `/api/auth/*` |
+| Appointments | `/api/appointments/*` |
+| Availability | `/api/availability/*` |
+| Clients | `/api/clients/*` |
+| Admin | `/api/admin/*` |
+| Billing | `/api/billing/*` |
+| AI | `/api/ai/*` |
 
-### Appointment
-
-`id` · `providerId` · `clientId` · `clientName` · `clientEmail` · `startTime` · `endTime` · `status` · `publicToken`
-
-### Availability
-
-`id` · `providerId` · `dayOfWeek` · `startTime` · `endTime` · `slotDuration` · `bufferTime`
+For full contracts, refer to backend source code.
 
 ---
 
 ## Testing
 
-### Backend
-
 ```bash
-cd backend
-npm run test
+cd backend && npm run test
+cd frontend && npm run test
 ```
-
-Includes:
-
-- Zod schemas
-- Validation middleware
-- Date utilities
-
-### Frontend
-
-```bash
-cd frontend
-npm run test
-```
-
-Includes:
-
-- Form validation
-- Hooks testing
 
 ---
 
-## Production Features
+## Production Build
 
-- JWT authentication
-- Refresh tokens
-- Public booking system
-- Role-based access
-- Input validation
-- Error handling
-- Modular architecture
-- Prisma ORM
-- REST API
-- Environment configuration
+```bash
+cd backend && npm run build
+cd frontend && npm run build
+```
+
+- **Frontend output:** `frontend/dist`
+- **Backend output:** `backend/dist`
+
+Production typically runs compiled backend with environment-configured services.
 
 ---
 
-## Future Improvements
+## Design Decisions
 
-- Stripe production integration
-- Email provider integration
-- Plan enforcement
-- Advanced analytics
-- Multi-tenant architecture
+- Clear separation between API and client
+- Strong typing across stack (TypeScript end-to-end)
+- Scalable architecture for SaaS evolution
+- Demo-first approach for portfolio usability
+- Incremental feature expansion (billing, AI, automation)
+
+---
+
+## Roadmap (Planned Enhancements)
+
+- Stripe billing integration
+- Email notifications (SMTP / transactional)
+- AI-powered scheduling assistant
+- Multi-tenant isolation improvements
+- Audit logs and analytics
 
 ---
 
 ## License
 
-Private project — Portfolio use.
+Private project — intended for portfolio and demonstration purposes unless otherwise agreed.

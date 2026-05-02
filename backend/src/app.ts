@@ -1,5 +1,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import 'express-async-errors';
 import { env } from './config/env';
 import { corsOptions } from './config/corsOptions';
@@ -7,6 +9,19 @@ import { errorHandler } from './middleware/error.middleware';
 import { stripeWebhookHandler } from './controllers/billingController';
 
 const app: Express = express();
+
+// Security headers (Helmet)
+app.use(helmet());
+
+// Global rate limiter: 200 requests/min por IP
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas requisições. Tente novamente em instantes.' },
+});
+app.use(globalLimiter);
 
 // CORS primeiro: preflight OPTIONS e credenciais antes de qualquer rota ou body parser
 app.use(cors(corsOptions));

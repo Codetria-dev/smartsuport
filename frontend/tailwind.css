@@ -10,3 +10,16 @@
 @source "./src/**/*.js";
 
 @source inline("bg-purple-100 text-purple-700 bg-green-100 text-green-700 bg-gray-200 text-gray-700 focus:ring-gray-900 border-gray-100 shadow-lg max-w-[720px] hover:bg-gray-800 mb-16 sm:mb-20 mb-10 mb-12");
+
+/* ===== Tema unificado — @theme substitui theme.extend no tailwind.config.js ===== */
+@theme {
+  --color-brand-pastel: #E8d4b9;
+  --color-brand-light: #e19e6a;
+  --color-brand: #d64e38;
+  --color-brand-dark: #b83d2a;
+  --color-brand-darker: #6f6f4b;
+  --content-max-width: 80rem;
+  --content-narrow: 32rem;
+  --section-padding-y: 3rem;
+  --section-padding-x: 1.5rem;
+}

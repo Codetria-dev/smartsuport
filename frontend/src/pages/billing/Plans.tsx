@@ -9,27 +9,27 @@ export type PlanSlug = 'FREE' | 'SMART' | 'PRO';
 
 const PLAN_FEATURES: Record<PlanSlug, string[]> = {
   FREE: [
-    '50 appointments/month',
-    '1 provider',
-    'Basic scheduling',
-    'Email notifications',
+    'feature50Appointments',
+    'feature1Provider',
+    'featureBasicScheduling',
+    'featureEmailNotifications',
   ],
   SMART: [
-    '200 appointments/month',
-    '3 providers',
-    'Basic scheduling',
-    'AI Auto Responder',
-    'AI Smart Scheduling',
-    'Basic analytics',
+    'feature200Appointments',
+    'feature3Providers',
+    'featureBasicScheduling',
+    'featureAIAutoResponder',
+    'featureAISmartScheduling',
+    'featureAnalyticsBasic',
   ],
   PRO: [
-    'Unlimited appointments',
-    'Unlimited providers',
-    'AI Auto Responder',
-    'AI Smart Scheduling',
-    'Sentiment Analysis',
-    'Webhooks and API',
-    'Advanced analytics',
+    'featureUnlimitedAppointmentsPro',
+    'featureUnlimitedProvidersPro',
+    'featureAIAutoResponder',
+    'featureAISmartScheduling',
+    'featureSentimentAnalysis',
+    'featureWebhooksAPI',
+    'featureAdvancedAnalytics',
   ],
 };
 
@@ -38,6 +38,8 @@ const PLAN_PRICES: Record<PlanSlug, { amount: string; suffix: string }> = {
   SMART: { amount: 'R$ 49', suffix: '/mo' },
   PRO: { amount: 'R$ 99', suffix: '/mo' },
 };
+
+const PLAN_ORDER: PlanSlug[] = ['FREE', 'SMART', 'PRO'];
 
 export default function Plans() {
   const { t } = useTranslation('billing');
@@ -113,12 +115,26 @@ export default function Plans() {
     }
   };
 
+  const brandColor = '#d64e38';
+
+  const baseInputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '12px 20px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: 600,
+    border: 'none',
+    cursor: 'pointer',
+  };
+
   if (loading) return <Loading />;
 
   if (error && !planInfo) {
     return (
-      <div className="max-w-5xl mx-auto px-6 py-10">
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm">{error}</div>
+      <div style={{ minHeight: 'calc(100vh - 4rem)', background: 'linear-gradient(180deg, #fef6f2 0%, #f9fafb 100%)', padding: '40px 24px' }}>
+        <div style={{ maxWidth: '1024px', margin: '0 auto', padding: '16px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', fontSize: '14px' }}>
+          {error}
+        </div>
       </div>
     );
   }
@@ -127,89 +143,91 @@ export default function Plans() {
 
   const currentPlan = (planInfo.plan?.toUpperCase() || 'FREE') as PlanSlug;
   const isPaidPlan = currentPlan === 'SMART' || currentPlan === 'PRO';
-  const startDateFormatted = planInfo.startDate ? new Date(planInfo.startDate).toLocaleDateString('pt-BR') : null;
+  const startDateFormatted = planInfo.startDate ? new Date(planInfo.startDate).toLocaleDateString() : null;
 
   const renderPlanCta = (slug: PlanSlug) => {
+    const btnStyle: React.CSSProperties = {
+      ...baseInputStyle,
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
+
     if (slug === currentPlan) {
       return (
-        <button
-          type="button"
-          disabled
-          className="w-full bg-gray-200 text-gray-700 rounded-lg py-3.5 text-base font-medium cursor-not-allowed"
-        >
-          {t('currentPlan')}
+        <button type="button" disabled
+          style={{ ...baseInputStyle, backgroundColor: '#f3f4f6', color: '#6b7280', cursor: 'not-allowed', border: '1px solid #e5e7eb' }}>
+          {t('currentPlan')} ✓
         </button>
       );
     }
     if (slug === 'FREE') return null;
-    if (slug === 'SMART') {
-      return (
-        <button
-          type="button"
-          onClick={() => handleUpgrade('SMART')}
-          disabled={!!actionLoading}
-          className="w-full bg-orange-500 text-white rounded-lg py-3.5 text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {actionLoading === 'SMART' ? '...' : 'Upgrade to Smart'}
-        </button>
-      );
-    }
-    if (slug === 'PRO') {
-      return (
-        <button
-          type="button"
-          onClick={() => handleUpgrade('PRO')}
-          disabled={!!actionLoading}
-          className="w-full bg-orange-500 text-white rounded-lg py-3.5 text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {actionLoading === 'PRO' ? '...' : 'Upgrade to Pro'}
-        </button>
-      );
-    }
-    return null;
+    return (
+      <button
+        type="button"
+        onClick={() => handleUpgrade(slug)}
+        disabled={!!actionLoading}
+        style={{ ...baseInputStyle, backgroundColor: brandColor, color: '#fff', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)', opacity: !!actionLoading ? 0.5 : 1, cursor: !!actionLoading ? 'not-allowed' : 'pointer' }}
+        onMouseEnter={(e) => { if (!actionLoading) e.currentTarget.style.backgroundColor = '#b83d2a'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = brandColor; }}
+      >
+        {actionLoading === slug ? '...' : t(slug === 'SMART' ? 'upgradeToSmart' : 'upgradeToPro')}
+      </button>
+    );
   };
 
   return (
-    <div className="w-full bg-gray-50 min-h-[60vh] pb-16">
-      <div className="max-w-5xl mx-auto px-6 py-10 sm:py-12">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-3">{t('plansAndBilling')}</h1>
-        <p className="text-sm text-gray-500 mb-10">{t('subtitle')}</p>
+    <div style={{ minHeight: 'calc(100vh - 4rem)', background: 'linear-gradient(180deg, #fef6f2 0%, #f9fafb 100%)', paddingBottom: '64px' }}>
+      <div style={{ width: '100%', maxWidth: '1024px', margin: '0 auto', padding: '40px 24px' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '4px' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'rgba(214, 78, 56, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg style={{ width: '24px', height: '24px', color: brandColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', letterSpacing: '-0.025em', margin: 0 }}>{t('plansAndBilling')}</h1>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>{t('subtitle')}</p>
+            </div>
+          </div>
+        </div>
 
+        {/* Alerts */}
         {stripeUnavailable && (
-          <div className="mb-8 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-4 text-sm">
+          <div style={{ marginBottom: '32px', padding: '16px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', color: '#92400e', borderRadius: '8px', fontSize: '14px' }}>
             {t('stripeNotConfigured')}
           </div>
         )}
 
         {error && (
-          <div className="mb-8 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm">
+          <div style={{ marginBottom: '32px', padding: '16px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', fontSize: '14px' }}>
             {error}
           </div>
         )}
 
-        {/* Plano Atual - compacto (margin inferior grande para afastar os cards) */}
-        <div
-          className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-16 sm:mb-20"
-          style={{ marginBottom: '5rem' }}
-        >
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="text-sm font-medium text-gray-900">{t('currentPlan')}: {currentPlan}</span>
-            <span className="text-sm text-gray-500">|</span>
-            <span className="text-sm text-gray-600">{t('currentPlanStatus')}: {planInfo.status || 'ACTIVE'}</span>
+        {/* Current Plan Card */}
+        <div style={{ backgroundColor: '#fff', border: '1px solid #f0ebe7', borderRadius: '12px', padding: '32px', marginBottom: '48px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>{t('currentPlan')}</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '16px' }}>
+            <span style={{ fontSize: '24px', fontWeight: 700, color: '#111827' }}>{t(`${currentPlan.toLowerCase()}PlanLabel` as any)}</span>
+            <span style={{ padding: '4px 12px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, backgroundColor: planInfo.status === 'ACTIVE' ? '#dcfce7' : '#f3f4f6', color: planInfo.status === 'ACTIVE' ? '#166534' : '#4b5563' }}>
+              {planInfo.status || 'ACTIVE'}
+            </span>
             {startDateFormatted && (
-              <>
-                <span className="text-sm text-gray-500">|</span>
-                <span className="text-sm text-gray-500">Since: {startDateFormatted}</span>
-              </>
+              <span style={{ fontSize: '14px', color: '#6b7280' }}>{t('since')}: {startDateFormatted}</span>
             )}
           </div>
           {isPaidPlan && (
-            <div className="mt-5 pt-5 border-t border-gray-100">
+            <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #f0ebe7' }}>
               <button
                 type="button"
                 onClick={handleCancelSubscription}
                 disabled={!!actionLoading}
-                className="text-base text-gray-600 hover:text-gray-900 underline py-1.5 disabled:opacity-50"
+                style={{ fontSize: '14px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '2px', padding: '4px 0' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#dc2626'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280'; }}
               >
                 {actionLoading === 'cancel' ? '...' : t('cancelSubscription')}
               </button>
@@ -217,40 +235,55 @@ export default function Plans() {
           )}
         </div>
 
-        {/* Grid de Planos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {(['FREE', 'SMART', 'PRO'] as PlanSlug[]).map((slug) => (
-            <div
-              key={slug}
-              className={`bg-white rounded-xl border shadow-sm p-8 flex flex-col justify-between ${
-                slug === currentPlan ? 'border-gray-300 ring-1 ring-gray-200' : 'border-gray-200'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">{slug}</h3>
-                {slug === currentPlan && (
-                  <span className="bg-gray-100 text-gray-700 text-xs font-medium px-2 py-0.5 rounded-full">
-                    Current plan
-                  </span>
-                )}
+        {/* Plans Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '32px' }}>
+          {PLAN_ORDER.map((slug) => {
+            const isCurrent = slug === currentPlan;
+            const planSlug = slug.toLowerCase() as 'free' | 'smart' | 'pro';
+            return (
+              <div key={slug} style={{
+                backgroundColor: '#fff',
+                borderRadius: '12px',
+                border: isCurrent ? `2px solid ${brandColor}` : '1px solid #f0ebe7',
+                padding: '32px',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: isCurrent ? `0 0 0 4px rgba(214, 78, 56, 0.08)` : '0 1px 3px 0 rgba(0,0,0,0.06)',
+              }}>
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', margin: 0 }}>
+                      {t(`${planSlug}PlanLabel` as any)}
+                    </h3>
+                    {isCurrent && (
+                      <span style={{ backgroundColor: 'rgba(214, 78, 56, 0.1)', color: brandColor, fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '9999px' }}>
+                        {t('currentPlan')}
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                    <span style={{ fontSize: '30px', fontWeight: 700, color: '#111827' }}>{PLAN_PRICES[slug].amount}</span>
+                    <span style={{ color: '#6b7280', fontSize: '14px' }}>{PLAN_PRICES[slug].suffix}</span>
+                  </div>
+                </div>
+
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, margin: '0 0 32px 0', padding: 0, listStyle: 'none' }}>
+                  {PLAN_FEATURES[slug].map((featureKey) => (
+                    <li key={featureKey} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', fontSize: '14px', color: '#4b5563' }}>
+                      <svg style={{ width: '16px', height: '16px', marginTop: '2px', color: brandColor, flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>{t(featureKey)}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
+                  {renderPlanCta(slug)}
+                </div>
               </div>
-              <div className="mb-6">
-                <span className="text-3xl font-bold text-gray-900">{PLAN_PRICES[slug].amount}</span>
-                <span className="text-gray-500 text-sm ml-1">{PLAN_PRICES[slug].suffix}</span>
-              </div>
-              <ul className="space-y-3 text-sm text-gray-600 mb-8">
-                {PLAN_FEATURES[slug].map((feature) => (
-                  <li key={feature} className="flex items-center gap-2">
-                    <span>✓</span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto pt-2">
-                {renderPlanCta(slug)}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

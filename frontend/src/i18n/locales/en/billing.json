@@ -22,6 +22,20 @@
   "featureUnlimitedProviders": "Unlimited providers",
   "featureSentimentAnalysis": "Sentiment Analysis",
   "featureAdvancedAnalytics": "Advanced analytics",
+  "feature50Appointments": "50 appointments/month",
+  "feature1Provider": "1 provider",
+  "feature200Appointments": "200 appointments/month",
+  "feature3Providers": "3 providers",
+  "featureAIAutoResponder": "AI Auto Responder",
+  "featureAISmartScheduling": "AI Smart Scheduling",
+  "featureWebhooksAPI": "Webhooks and API",
+  "featureUnlimitedAppointmentsPro": "Unlimited appointments",
+  "featureUnlimitedProvidersPro": "Unlimited providers",
+  "upgradeToSmart": "Upgrade to Smart",
+  "freePlanLabel": "FREE",
+  "smartPlanLabel": "SMART",
+  "proPlanLabel": "PRO",
+  "since": "Since",
   "stripeNotConfigured": "Checkout not available. Stripe is not configured on the server.",
   "cancelSubscription": "Cancel subscription",
   "cancelConfirm": "Are you sure you want to cancel your subscription? It will remain active until the end of the current period.",
@@ -29,5 +43,6 @@
   "successMessage": "Your plan has been activated successfully. Enjoy all features!",
   "backToPlans": "Back to plans",
   "viewMyPlans": "View my plans",
-  "subtitle": "Manage your subscription plan"
+  "subtitle": "Manage your subscription plan",
+  "sessionIdNotFound": "Session ID parameter not found."
 }

@@ -1,17 +1,31 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   const { t } = useTranslation('common');
   return (
-    <footer className="public-footer bg-gray-50 border-t border-gray-200 py-6 mt-auto sm:mt-20 flex-shrink-0 w-full min-w-0">
-      <div className="public-footer-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="public-footer-copy text-gray-500 text-sm">
-          © {new Date().getFullYear()} {t('appName')}. {t('allRightsReserved')}
+    <footer style={{
+      background: '#f9fafb',
+      borderTop: '1px solid #e5e7eb',
+      padding: '24px 0',
+      marginTop: 'auto',
+      flexShrink: 0,
+      width: '100%',
+    }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px', textAlign: 'center' }}>
+        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+          &copy; {new Date().getFullYear()} {t('appName')}. {t('allRightsReserved')}
         </p>
-        <div className="public-footer-links flex gap-6 justify-center mt-2 text-gray-500 text-sm">
-          <a href="#" className="hover:text-gray-900 transition-colors">{t('terms')}</a>
-          <a href="#" className="hover:text-gray-900 transition-colors">{t('privacy')}</a>
-          <a href="#" className="hover:text-gray-900 transition-colors">{t('support')}</a>
+        <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '8px', fontSize: '14px', color: '#6b7280' }}>
+          <Link to="/terms" style={{ color: '#6b7280', textDecoration: 'none' }}>
+            {t('terms')}
+          </Link>
+          <Link to="/privacy" style={{ color: '#6b7280', textDecoration: 'none' }}>
+            {t('privacy')}
+          </Link>
+          <Link to="/support" style={{ color: '#6b7280', textDecoration: 'none' }}>
+            {t('support')}
+          </Link>
         </div>
       </div>
     </footer>

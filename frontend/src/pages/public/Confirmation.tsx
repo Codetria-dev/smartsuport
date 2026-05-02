@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { appointmentService } from '../../services/appointmentService';
 import { Appointment } from '../../types/appointment';
 import Button from '../../components/ui/Button';
@@ -7,6 +8,7 @@ import Button from '../../components/ui/Button';
 export default function Confirmation() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation('public');
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,7 +27,7 @@ export default function Confirmation() {
       const data = await appointmentService.getAppointmentByPublicToken(token);
       setAppointment(data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Agendamento não encontrado');
+      setError(err.response?.data?.error || t('appointmentNotFound'));
     } finally {
       setLoading(false);
     }
@@ -34,7 +36,7 @@ export default function Confirmation() {
   const handleCancel = async () => {
     if (!token) return;
 
-    if (!confirm('Tem certeza que deseja cancelar este agendamento?')) {
+    if (!window.confirm(t('cancelConfirm'))) {
       return;
     }
 
@@ -42,7 +44,16 @@ export default function Confirmation() {
       await appointmentService.cancelPublicAppointment(token);
       loadAppointment();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao cancelar agendamento');
+      setError(err.response?.data?.error || t('cancelError'));
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'CONFIRMED': return t('confirmed');
+      case 'PENDING': return t('pending');
+      case 'CANCELLED': return t('cancelled');
+      default: return status;
     }
   };
 
@@ -51,7 +62,7 @@ export default function Confirmation() {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-brand border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg text-gray-700">Carregando agendamento...</p>
+          <p className="text-lg text-gray-700">{t('loadingAppointment')}</p>
         </div>
       </div>
     );
@@ -66,8 +77,8 @@ export default function Confirmation() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Agendamento não encontrado</h1>
-          <p className="text-gray-600 mb-6">{error || 'O agendamento solicitado não existe.'}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('appointmentNotFound')}</h1>
+          <p className="text-gray-600 mb-6">{error || t('appointmentNotFoundDesc')}</p>
         </div>
         <div className="absolute bottom-4 left-4">
           <button
@@ -75,7 +86,7 @@ export default function Confirmation() {
             onClick={() => navigate('/')}
             className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
           >
-            ← Voltar ao início
+            ← {t('backToHome')}
           </button>
         </div>
       </div>
@@ -92,16 +103,16 @@ export default function Confirmation() {
           <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">✓</span>
           </div>
-          <h1 className="page-title text-2xl md:text-3xl">Agendamento Confirmado!</h1>
-          <p className="text-gray-600 text-base">Seu agendamento foi criado com sucesso</p>
+          <h1 className="page-title text-2xl md:text-3xl">{t('appointmentConfirmed')}</h1>
+          <p className="text-gray-600 text-base">{t('appointmentCreated')}</p>
         </section>
         <div className="content-card">
 
           <div className="border-t border-gray-200 pt-6 space-y-4">
             <div>
-              <p className="text-sm font-medium text-gray-500">Data e Horário</p>
+              <p className="text-sm font-medium text-gray-500">{t('dateTime')}</p>
               <p className="text-lg text-gray-900">
-                {startDate.toLocaleDateString('pt-BR', {
+                {startDate.toLocaleDateString(undefined, {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -109,12 +120,12 @@ export default function Confirmation() {
                 })}
               </p>
               <p className="text-lg text-gray-900">
-                {startDate.toLocaleTimeString('pt-BR', {
+                {startDate.toLocaleTimeString(undefined, {
                   hour: '2-digit',
                   minute: '2-digit',
                 })}{' '}
                 -{' '}
-                {endDate.toLocaleTimeString('pt-BR', {
+                {endDate.toLocaleTimeString(undefined, {
                   hour: '2-digit',
                   minute: '2-digit',
                 })}
@@ -123,7 +134,7 @@ export default function Confirmation() {
 
             {appointment.provider && (
               <div>
-                <p className="text-sm font-medium text-gray-500">Profissional</p>
+                <p className="text-sm font-medium text-gray-500">{t('professional')}</p>
                 <p className="text-lg text-gray-900">{appointment.provider.name}</p>
                 {appointment.provider.email && (
                   <p className="text-sm text-gray-600">{appointment.provider.email}</p>
@@ -133,7 +144,7 @@ export default function Confirmation() {
 
             {appointment.clientName && (
               <div>
-                <p className="text-sm font-medium text-gray-500">Cliente</p>
+                <p className="text-sm font-medium text-gray-500">{t('client')}</p>
                 <p className="text-lg text-gray-900">{appointment.clientName}</p>
                 {appointment.clientEmail && (
                   <p className="text-sm text-gray-600">{appointment.clientEmail}</p>
@@ -143,27 +154,27 @@ export default function Confirmation() {
 
             {appointment.title && (
               <div>
-                <p className="text-sm font-medium text-gray-500">Título</p>
+                <p className="text-sm font-medium text-gray-500">{t('titleLabel')}</p>
                 <p className="text-lg text-gray-900">{appointment.title}</p>
               </div>
             )}
 
             {appointment.description && (
               <div>
-                <p className="text-sm font-medium text-gray-500">Descrição</p>
+                <p className="text-sm font-medium text-gray-500">{t('descriptionLabel')}</p>
                 <p className="text-lg text-gray-900">{appointment.description}</p>
               </div>
             )}
 
             {appointment.location && (
               <div>
-                <p className="text-sm font-medium text-gray-500">Localização</p>
+                <p className="text-sm font-medium text-gray-500">{t('locationLabel')}</p>
                 <p className="text-lg text-gray-900">{appointment.location}</p>
               </div>
             )}
 
             <div>
-              <p className="text-sm font-medium text-gray-500">Status</p>
+              <p className="text-sm font-medium text-gray-500">{t('status')}</p>
               <span
                 className={`inline-block px-3 py-1 rounded text-sm font-medium ${
                   appointment.status === 'CONFIRMED'
@@ -175,13 +186,7 @@ export default function Confirmation() {
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                {appointment.status === 'CONFIRMED'
-                  ? 'Confirmado'
-                  : appointment.status === 'PENDING'
-                  ? 'Pendente'
-                  : appointment.status === 'CANCELLED'
-                  ? 'Cancelado'
-                  : appointment.status}
+                {getStatusText(appointment.status)}
               </span>
             </div>
 
@@ -190,7 +195,7 @@ export default function Confirmation() {
           <div className="mt-8 space-y-3">
             {appointment.status !== 'CANCELLED' && (
               <Button variant="danger" onClick={handleCancel} className="w-full">
-                Cancelar Agendamento
+                {t('cancelAppointment')}
               </Button>
             )}
           </div>
@@ -201,7 +206,7 @@ export default function Confirmation() {
             onClick={() => navigate('/')}
             className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
           >
-            ← Voltar ao Início
+            ← {t('backToHome')}
           </button>
         </div>
       </div>

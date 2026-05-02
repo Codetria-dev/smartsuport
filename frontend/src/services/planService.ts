@@ -1,4 +1,6 @@
 import { api } from './api';
+import { storage } from '../utils/storage';
+import { getDemoPlanInfo } from '../demo/demoData';
 
 export interface PlanInfo {
   plan: string;
@@ -19,6 +21,9 @@ export const planService = {
    * Obtém informações do plano do usuário
    */
   async getUserPlan(): Promise<PlanInfo> {
+    if (storage.isDemoMode()) {
+      return Promise.resolve(getDemoPlanInfo());
+    }
     const response = await api.get('/api/auth/me');
     const user = response.data || {};
     const planRaw = user.plan ? String(user.plan).toUpperCase() : 'FREE';

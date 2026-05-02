@@ -19,7 +19,7 @@ export default function BillingSuccess() {
   useEffect(() => {
     if (!sessionId) {
       setLoading(false);
-      setError('Parâmetro session_id não encontrado.');
+      setError(t('sessionIdNotFound'));
       return;
     }
 

@@ -43,78 +43,149 @@ export default function Settings() {
     }
   };
 
+  const cardStyle = {
+    background: '#fff',
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    border: '1px solid #f0ebe7',
+    padding: '32px',
+  };
+
+  const pageStyle = {
+    width: '100%',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+    minHeight: '60vh',
+  };
+
+  const containerStyle = {
+    maxWidth: '672px',
+    margin: '0 auto',
+    padding: '24px 16px',
+  };
+
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 md:px-8 md:py-10">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 space-y-8">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">
-            {t('nav:settings')}
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {t('settings:managePreferences')}
-          </p>
-        </header>
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <div style={cardStyle}>
+          <header style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d64e38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+              <h1 style={{ fontSize: '22px', fontWeight: 600, color: '#111827', margin: 0 }}>
+                {t('nav:settings')}
+              </h1>
+            </div>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
+              {t('settings:managePreferences')}
+            </p>
+          </header>
 
-        {isProvider && (
-          <div className="border-t border-gray-200 pt-6">
-            <div className="flex items-center justify-between gap-4">
+          {isProvider && (
+            <div style={{ borderTop: '1px solid #f0ebe7', paddingTop: '24px', marginBottom: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                <div>
+                  <h3 style={{ fontWeight: 500, color: '#111827', margin: 0, fontSize: '16px' }}>
+                    {t('settings:profileActive')}
+                  </h3>
+                  <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                    {t('settings:profileActiveDesc')}
+                  </p>
+                </div>
+                {loadingProfile ? (
+                  <div style={{
+                    width: '44px',
+                    height: '24px',
+                    background: '#e5e7eb',
+                    borderRadius: '9999px',
+                    flexShrink: 0,
+                  }} />
+                ) : (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isProfileActive}
+                    disabled={updatingActive}
+                    onClick={() => handleToggleProfileActive(!isProfileActive)}
+                    style={{
+                      position: 'relative',
+                      display: 'inline-flex',
+                      height: '24px',
+                      width: '44px',
+                      flexShrink: 0,
+                      cursor: updatingActive ? 'not-allowed' : 'pointer',
+                      borderRadius: '9999px',
+                      border: '2px solid transparent',
+                      background: isProfileActive ? '#d64e38' : '#e5e7eb',
+                      transition: 'background 0.2s',
+                      opacity: updatingActive ? 0.5 : 1,
+                      padding: 0,
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        height: '20px',
+                        width: '20px',
+                        transform: isProfileActive ? 'translateX(20px)' : 'translateX(0)',
+                        borderRadius: '50%',
+                        background: '#fff',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                        transition: 'transform 0.2s',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <Link
+              to="/billing/plans"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '16px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                transition: 'background 0.2s',
+              }}
+            >
               <div>
-                <h3 className="font-medium text-gray-900">
-                  {t('settings:profileActive')}
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  {t('settings:profileActiveDesc')}
-                </p>
+                <div style={{ fontWeight: 500, color: '#111827', fontSize: '15px' }}>{t('nav:plans')}</div>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '2px' }}>
+                  {t('settings:planDesc')}
+                </div>
               </div>
-              {loadingProfile ? (
-                <div className="w-11 h-6 bg-gray-200 rounded-full animate-pulse flex-shrink-0" />
-              ) : (
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={isProfileActive}
-                  disabled={updatingActive}
-                  onClick={() => handleToggleProfileActive(!isProfileActive)}
-                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 ${
-                    isProfileActive ? 'bg-gray-900' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition ${
-                      isProfileActive ? 'translate-x-5' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              )}
-            </div>
+              <span style={{ color: '#9ca3af', fontSize: '18px' }}>→</span>
+            </Link>
+            <Link
+              to="/profile"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '16px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                transition: 'background 0.2s',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 500, color: '#111827', fontSize: '15px' }}>{t('nav:profile')}</div>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '2px' }}>
+                  {t('settings:profileDesc')}
+                </div>
+              </div>
+              <span style={{ color: '#9ca3af', fontSize: '18px' }}>→</span>
+            </Link>
           </div>
-        )}
-
-        <div className="space-y-3">
-          <Link
-            to="/billing/plans"
-            className="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-          >
-            <div>
-              <div className="font-medium text-gray-900">{t('nav:plans')}</div>
-              <div className="text-sm text-gray-500 mt-0.5">
-                {t('settings:planDesc')} →
-              </div>
-            </div>
-            <span className="text-gray-400 text-lg">→</span>
-          </Link>
-          <Link
-            to="/profile"
-            className="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-          >
-            <div>
-              <div className="font-medium text-gray-900">{t('nav:profile')}</div>
-              <div className="text-sm text-gray-500 mt-0.5">
-                {t('settings:profileDesc')} →
-              </div>
-            </div>
-            <span className="text-gray-400 text-lg">→</span>
-          </Link>
         </div>
       </div>
     </div>

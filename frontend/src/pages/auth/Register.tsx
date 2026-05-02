@@ -60,6 +60,10 @@ export default function Register() {
   return (
     <div className="saas-layout">
       <section className="saas-header">
+        <div className="mb-6">
+          <span className="text-2xl font-bold tracking-tight text-gray-900">Smart</span>
+          <span className="text-2xl font-bold tracking-tight text-brand">Support</span>
+        </div>
         <h1 className="saas-title">{t('auth:register')}</h1>
         <p className="saas-subtitle">{t('auth:registerSubtitle')}</p>
       </section>

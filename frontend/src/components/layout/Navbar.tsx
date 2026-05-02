@@ -3,26 +3,45 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 
-export default function Navbar() {
+interface NavbarProps {
+  onToggleSidebar?: () => void;
+}
+
+export default function Navbar({ onToggleSidebar }: NavbarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(['common', 'auth']);
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   return (
     <header className="app-navbar">
       <div className="app-navbar-inner">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          {/* Hamburger button - visível apenas em mobile */}
+          {onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className="sidebar-toggle-btn"
+              aria-label={t('common:menu')}
+            >
+              <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            className="text-2xl font-bold text-gray-900 hover:text-brand transition-colors"
+            className="app-navbar-brand"
+            aria-label={t('common:appName')}
           >
-            {t('common:appName')}
+            <span className="app-navbar-brand-smart">Smart</span>
+            <span className="app-navbar-brand-support">Support</span>
           </button>
         </div>
 
@@ -30,7 +49,7 @@ export default function Navbar() {
           <LanguageSwitcher />
           {user && (
             <>
-              <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">{user.name}</p>
                   <p className="text-xs text-gray-500">{user.email}</p>
@@ -49,12 +68,14 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-              <button
-                onClick={handleLogout}
-                className="px-5 py-2.5 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                {t('auth:logout')}
-              </button>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <button
+                  onClick={handleLogout}
+                  className="px-3 sm:px-5 py-2.5 text-sm sm:text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                >
+                  {t('auth:logout')}
+                </button>
+              </div>
             </>
           )}
         </div>

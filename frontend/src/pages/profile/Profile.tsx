@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import type { Profile as ProfileType } from '../../types/auth.types';
 import { useToast } from '../../contexts/ToastContext';
 
 export default function Profile() {
-  const { user, updateUser, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user, updateUser } = useAuth();
   const { t } = useTranslation('profile');
   const { success, error: showError } = useToast();
   const [profile, setProfile] = useState<ProfileType | null>(null);
@@ -99,6 +98,11 @@ export default function Profile() {
     }
   };
 
+  const [focusMap, setFocusMap] = useState<Record<string, boolean>>({});
+  const handleFocus = (name: string) => setFocusMap((m) => ({ ...m, [name]: true }));
+  const handleBlur = (name: string) => setFocusMap((m) => ({ ...m, [name]: false }));
+  const [hoverBtn, setHoverBtn] = useState(false);
+
   if (!user) return null;
 
   const userRole = user.role != null ? String(user.role).toUpperCase() : '';
@@ -109,13 +113,70 @@ export default function Profile() {
         ? t('professional')
         : t('client');
 
+  const inputStyle = (name: string) => ({
+    width: '100%' as const,
+    padding: '14px 16px',
+    backgroundColor: '#f9fafb',
+    fontSize: '15px',
+    color: '#1f2937',
+    borderRadius: '12px',
+    border: focusMap[name] ? '1.5px solid #d64e38' : '1.5px solid #e5e7eb',
+    boxShadow: focusMap[name] ? '0 0 0 3px rgba(214,78,56,0.15)' : 'none',
+    outline: 'none' as const,
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    boxSizing: 'border-box' as const,
+  });
+
+  const textareaStyle = (name: string) => ({
+    ...inputStyle(name),
+    minHeight: '120px',
+    resize: 'vertical' as const,
+    fontFamily: 'inherit',
+  });
+
+  const labelStyle = {
+    display: 'block' as const,
+    fontSize: '14px',
+    fontWeight: 600,
+    color: '#374151',
+    marginBottom: '6px',
+  };
+
+  const cardStyle = {
+    background: '#fff',
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    border: '1px solid #f0ebe7',
+    padding: '32px',
+  };
+
+  const pageStyle = {
+    width: '100%',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+    minHeight: '60vh',
+    paddingBottom: '48px',
+  };
+
+  const containerStyle = {
+    maxWidth: '720px',
+    margin: '0 auto',
+    marginTop: '40px',
+    padding: '0 16px',
+  };
 
   if (loading) {
     return (
-      <div className="w-full bg-gray-50 min-h-[60vh] pb-12">
-        <div className="max-w-[720px] mx-auto mt-10 px-4">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 flex justify-center py-16">
-            <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <div style={pageStyle}>
+        <div style={containerStyle}>
+          <div style={{ ...cardStyle, display: 'flex', justifyContent: 'center', padding: '64px 32px' }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              border: '2px solid #d64e38',
+              borderTopColor: 'transparent',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+            }} />
           </div>
         </div>
       </div>
@@ -123,120 +184,140 @@ export default function Profile() {
   }
 
   return (
-    <div className="w-full bg-gray-50 min-h-[60vh] pb-12">
-      <div className="max-w-[720px] mx-auto mt-10 px-4">
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <form onSubmit={handleSubmit} style={cardStyle}>
           {/* Header */}
           <header>
-            <h1 className="text-2xl font-semibold text-gray-900">{t('pageTitle')}</h1>
-            <p className="text-sm text-gray-500 mt-1 mb-6">{t('subtitle')}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d64e38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <h1 style={{ fontSize: '22px', fontWeight: 600, color: '#111827', margin: 0 }}>
+                {t('pageTitle')}
+              </h1>
+            </div>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 24px 0' }}>
+              {t('subtitle')}
+            </p>
           </header>
 
           {/* Seção 1 — Informações */}
-          <section className="space-y-5 pt-1">
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">{t('fullName')}</label>
+          <section style={{ paddingTop: '4px' }}>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('fullName')}</label>
               <input
                 type="text"
                 value={form.name}
+                onFocus={() => handleFocus('name')}
+                onBlur={() => handleBlur('name')}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                style={inputStyle('name')}
                 required
                 minLength={2}
                 maxLength={100}
               />
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">{t('email')}</label>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('email')}</label>
               <input
                 type="email"
                 value={form.email}
+                onFocus={() => handleFocus('email')}
+                onBlur={() => handleBlur('email')}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                style={inputStyle('email')}
                 required
               />
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">{t('phone')}</label>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('phone')}</label>
               <input
                 type="tel"
                 value={form.phone}
+                onFocus={() => handleFocus('phone')}
+                onBlur={() => handleBlur('phone')}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                style={inputStyle('phone')}
                 maxLength={20}
               />
             </div>
 
             {isProvider && (
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('presentationCard')}</label>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={labelStyle}>{t('presentationCard')}</label>
                 <textarea
                   value={form.profileDescription}
+                  onFocus={() => handleFocus('profileDescription')}
+                  onBlur={() => handleBlur('profileDescription')}
                   onChange={(e) => setForm((f) => ({ ...f, profileDescription: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm min-h-[120px] resize-y focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  style={textareaStyle('profileDescription')}
                   placeholder={t('presentationCardPlaceholder')}
                   maxLength={2000}
                   rows={4}
                 />
-                <p className="text-xs text-gray-500 mt-1">{form.profileDescription.length}/2000</p>
+                <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                  {form.profileDescription.length}/2000
+                </p>
               </div>
             )}
           </section>
 
           {/* Seção 2 — Conta */}
-          <section className="border-t border-gray-100 mt-8 pt-8">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">{t('accountType')}</label>
+          <section style={{ borderTop: '1px solid #f0ebe7', marginTop: '32px', paddingTop: '32px' }}>
+            <label style={labelStyle}>{t('accountType')}</label>
             <span
-              className={
-                userRole === 'ADMIN'
-                  ? 'px-3 py-1 rounded-full text-sm inline-block bg-purple-100 text-purple-700'
-                  : userRole === 'PROVIDER'
-                    ? 'px-3 py-1 rounded-full text-sm inline-block bg-green-100 text-green-700'
-                    : 'px-3 py-1 rounded-full text-sm inline-block bg-gray-200 text-gray-700'
-              }
+              style={{
+                display: 'inline-block',
+                padding: '4px 12px',
+                borderRadius: '9999px',
+                fontSize: '14px',
+                fontWeight: 500,
+                background:
+                  userRole === 'ADMIN'
+                    ? '#f3e8ff'
+                    : userRole === 'PROVIDER'
+                      ? '#dcfce7'
+                      : '#e5e7eb',
+                color:
+                  userRole === 'ADMIN'
+                    ? '#7c3aed'
+                    : userRole === 'PROVIDER'
+                      ? '#16a34a'
+                      : '#374151',
+              }}
             >
               {roleLabel}
             </span>
-            {!isProvider && (
-              <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-800">
-                  {t('clientNotInList')}{' '}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                      navigate('/');
-                    }}
-                    className="font-medium underline hover:no-underline"
-                  >
-                    sair da conta
-                  </button>
-                  , depois clique em &quot;{t('createProAccount')}&quot;.
-                </p>
-              </div>
-            )}
-            {isProvider && (
-              <p className="mt-4 text-sm text-gray-500">
-                {t('profileVisibleAt')}{' '}
-                <Link to="/select-provider" className="text-gray-900 font-medium underline hover:text-gray-700">
-                  {t('seeMyProfile')} →
-                </Link>
-              </p>
-            )}
           </section>
 
           {/* Seção 3 — Ações */}
-          <section className="border-t border-gray-100 mt-8 pt-8 flex gap-4 items-center justify-end">
+          <section style={{ borderTop: '1px solid #f0ebe7', marginTop: '32px', paddingTop: '32px', display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'flex-end' }}>
             <button
               type="submit"
               disabled={saving}
-              className="bg-gray-900 text-white px-6 py-3 rounded-lg text-base font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[2.75rem]"
+              style={{
+                background: hoverBtn ? '#b83d2a' : '#d64e38',
+                color: '#fff',
+                padding: '10px 32px',
+                fontSize: '13px',
+                fontWeight: 700,
+                border: 'none',
+                borderRadius: '10px',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                opacity: saving ? 0.5 : 1,
+                transition: 'background 0.2s',
+                minHeight: '44px',
+              }}
+              onMouseEnter={() => setHoverBtn(true)}
+              onMouseLeave={() => setHoverBtn(false)}
             >
               {saving ? t('saving') : t('save')}
             </button>
             <Link
               to="/forgot-password"
-              className="text-gray-600 text-sm hover:text-gray-900 transition-colors"
+              style={{ color: '#6b7280', fontSize: '14px', textDecoration: 'none' }}
             >
               {t('changePassword')}
             </Link>

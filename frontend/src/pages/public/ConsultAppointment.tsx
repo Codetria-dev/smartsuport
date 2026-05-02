@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { appointmentService } from '../../services/appointmentService';
 import { Appointment } from '../../types/appointment';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 
 export default function ConsultAppointment() {
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const [token, setToken] = useState('');
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
 
   const handleConsult = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +21,7 @@ export default function ConsultAppointment() {
     setAppointment(null);
 
     if (!token.trim()) {
-      setError('Por favor, informe o token de acesso');
+      setError(t('tokenRequired'));
       return;
     }
 
@@ -27,7 +30,7 @@ export default function ConsultAppointment() {
       const data = await appointmentService.getAppointmentByPublicToken(token.trim());
       setAppointment(data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Agendamento não encontrado. Verifique o token.');
+      setError(err.response?.data?.error || t('notFoundByToken'));
     } finally {
       setLoading(false);
     }
@@ -36,17 +39,39 @@ export default function ConsultAppointment() {
   const handleCancel = async () => {
     if (!token || !appointment) return;
 
-    if (!confirm('Tem certeza que deseja cancelar este agendamento?')) {
-      return;
-    }
-
     try {
       await appointmentService.cancelPublicAppointment(token);
-      // Recarrega o agendamento após cancelar
       const data = await appointmentService.getAppointmentByPublicToken(token);
       setAppointment(data);
+      setConfirmingCancel(false);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao cancelar agendamento');
+      setError(err.response?.data?.error || t('cancelError'));
+    }
+  };
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'CONFIRMED':
+        return 'bg-green-100 text-green-800';
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'CANCELLED':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'CONFIRMED':
+        return t('confirmed');
+      case 'PENDING':
+        return t('pending');
+      case 'CANCELLED':
+        return t('cancelled');
+      default:
+        return status;
     }
   };
 
@@ -54,28 +79,23 @@ export default function ConsultAppointment() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto">
         <section className="mb-8">
-          <h1 className="page-title text-2xl md:text-3xl">Consultar Agendamento</h1>
-          <p className="text-gray-600 text-base mt-1">
-            Informe o token de acesso para consultar seu agendamento
-          </p>
+          <h1 className="page-title text-2xl md:text-3xl">{t('consultTitle')}</h1>
+          <p className="text-gray-600 text-base mt-1">{t('consultSubtitle')}</p>
         </section>
 
-        {/* Formulário de Consulta */}
         {!appointment && (
           <div className="content-card mb-6">
             <form onSubmit={handleConsult} className="space-y-6">
               <div>
                 <Input
                   type="text"
-                  label="Token de Acesso"
+                  label={t('consultTokenLabel')}
                   value={token}
                   onChange={(e) => setToken(e.target.value)}
-                  placeholder="Cole ou digite o token do seu agendamento"
+                  placeholder={t('consultTokenPlaceholder')}
                   required
                 />
-                <p className="text-sm text-gray-500 mt-2">
-                  O token foi enviado por email quando você criou o agendamento
-                </p>
+                <p className="text-sm text-gray-500 mt-2">{t('consultTokenHelp')}</p>
               </div>
 
               {error && (
@@ -85,13 +105,12 @@ export default function ConsultAppointment() {
               )}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Consultando...' : 'Consultar Agendamento'}
+                {loading ? t('consulting') : t('consultButton')}
               </Button>
             </form>
           </div>
         )}
 
-        {/* Resultado da Consulta */}
         {appointment && (
           <div className="content-card">
             <div className="text-center mb-6">
@@ -111,15 +130,15 @@ export default function ConsultAppointment() {
                 </svg>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Agendamento Encontrado
+                {t('appointmentFound')}
               </h2>
             </div>
 
             <div className="border-t border-gray-200 pt-6 space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-500">Data e Horário</p>
+                <p className="text-sm font-medium text-gray-500">{t('dateTime')}</p>
                 <p className="text-lg text-gray-900">
-                  {new Date(appointment.startTime).toLocaleDateString('pt-BR', {
+                  {new Date(appointment.startTime).toLocaleDateString(undefined, {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -127,12 +146,12 @@ export default function ConsultAppointment() {
                   })}
                 </p>
                 <p className="text-lg text-gray-900">
-                  {new Date(appointment.startTime).toLocaleTimeString('pt-BR', {
+                  {new Date(appointment.startTime).toLocaleTimeString(undefined, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}{' '}
                   -{' '}
-                  {new Date(appointment.endTime).toLocaleTimeString('pt-BR', {
+                  {new Date(appointment.endTime).toLocaleTimeString(undefined, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
@@ -141,7 +160,7 @@ export default function ConsultAppointment() {
 
               {appointment.provider && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Profissional</p>
+                  <p className="text-sm font-medium text-gray-500">{t('professional')}</p>
                   <p className="text-lg text-gray-900">{appointment.provider.name}</p>
                   {appointment.provider.email && (
                     <p className="text-sm text-gray-600">{appointment.provider.email}</p>
@@ -151,7 +170,7 @@ export default function ConsultAppointment() {
 
               {appointment.clientName && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Cliente</p>
+                  <p className="text-sm font-medium text-gray-500">{t('client')}</p>
                   <p className="text-lg text-gray-900">{appointment.clientName}</p>
                   {appointment.clientEmail && (
                     <p className="text-sm text-gray-600">{appointment.clientEmail}</p>
@@ -161,54 +180,55 @@ export default function ConsultAppointment() {
 
               {appointment.title && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Título</p>
+                  <p className="text-sm font-medium text-gray-500">{t('titleLabel')}</p>
                   <p className="text-lg text-gray-900">{appointment.title}</p>
                 </div>
               )}
 
               {appointment.description && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Descrição</p>
+                  <p className="text-sm font-medium text-gray-500">{t('descriptionLabel')}</p>
                   <p className="text-lg text-gray-900">{appointment.description}</p>
                 </div>
               )}
 
               {appointment.location && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Localização</p>
+                  <p className="text-sm font-medium text-gray-500">{t('locationLabel')}</p>
                   <p className="text-lg text-gray-900">{appointment.location}</p>
                 </div>
               )}
 
               <div>
-                <p className="text-sm font-medium text-gray-500">Status</p>
+                <p className="text-sm font-medium text-gray-500">{t('status')}</p>
                 <span
-                  className={`inline-block px-3 py-1 rounded text-sm font-medium mt-1 ${
-                    appointment.status === 'CONFIRMED'
-                      ? 'bg-green-100 text-green-800'
-                      : appointment.status === 'PENDING'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : appointment.status === 'CANCELLED'
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
+                  className={`inline-block px-3 py-1 rounded text-sm font-medium mt-1 ${getStatusStyle(
+                    appointment.status
+                  )}`}
                 >
-                  {appointment.status === 'CONFIRMED'
-                    ? 'Confirmado'
-                    : appointment.status === 'PENDING'
-                    ? 'Pendente'
-                    : appointment.status === 'CANCELLED'
-                    ? 'Cancelado'
-                    : appointment.status}
+                  {getStatusText(appointment.status)}
                 </span>
               </div>
             </div>
 
             <div className="mt-8 space-y-3">
-              {appointment.status !== 'CANCELLED' && (
-                <Button variant="danger" onClick={handleCancel} className="w-full">
-                  Cancelar Agendamento
+              {appointment.status !== 'CANCELLED' && !confirmingCancel && (
+                <Button variant="danger" onClick={() => setConfirmingCancel(true)} className="w-full">
+                  {t('cancelAppointment')}
                 </Button>
+              )}
+              {confirmingCancel && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700 mb-3">{t('cancelConfirm')}</p>
+                  <div className="flex gap-3">
+                    <Button variant="danger" onClick={handleCancel}>
+                      {t('cancelAppointment')}
+                    </Button>
+                    <Button variant="secondary" onClick={() => setConfirmingCancel(false)}>
+                      {t('back')}
+                    </Button>
+                  </div>
+                </div>
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button
@@ -217,15 +237,13 @@ export default function ConsultAppointment() {
                     setAppointment(null);
                     setToken('');
                     setError('');
+                    setConfirmingCancel(false);
                   }}
                 >
-                  Nova Consulta
+                  {t('newConsult')}
                 </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => navigate('/')}
-                >
-                  Voltar ao Início
+                <Button variant="secondary" onClick={() => navigate('/')}>
+                  {t('backToHome')}
                 </Button>
               </div>
             </div>
@@ -237,7 +255,7 @@ export default function ConsultAppointment() {
             onClick={() => navigate('/')}
             className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
           >
-            ← Voltar ao Início
+            ← {t('backToHome')}
           </button>
         </div>
       </div>

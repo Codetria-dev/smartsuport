@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { appointmentService } from '../../services/appointmentService';
 import { useFormValidation } from '../../hooks/useFormValidation';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
+import StepIndicator from '../../components/ui/StepIndicator';
 
 export default function PublicBookForm() {
   const { providerId } = useParams<{ providerId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation('public');
   const { date: selectedDate, time: selectedTime } = (location.state as { date?: string; time?: string }) || {};
 
   const [error, setError] = useState('');
@@ -40,6 +41,11 @@ export default function PublicBookForm() {
     }
   );
 
+  const [focusMap, setFocusMap] = useState<Record<string, boolean>>({});
+  const handleFocus = (name: string) => setFocusMap((m) => ({ ...m, [name]: true }));
+  const handleBlur = (name: string) => setFocusMap((m) => ({ ...m, [name]: false }));
+  const [hoverBtn, setHoverBtn] = useState<string | null>(null);
+
   if (!selectedDate || !selectedTime) {
     navigate(`/book/${providerId}`, { replace: true });
     return null;
@@ -50,12 +56,12 @@ export default function PublicBookForm() {
     setError('');
 
     if (!providerId) {
-      setError('Provider não encontrado');
+      setError(t('providerNotFound'));
       return;
     }
 
     if (!validateForm()) {
-      setError('Por favor, corrija os erros no formulário');
+      setError(t('fixFormErrors'));
       return;
     }
 
@@ -77,125 +83,292 @@ export default function PublicBookForm() {
 
       navigate(`/confirm/${appointment.publicToken}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao criar agendamento');
+      setError(err.response?.data?.error || t('createError'));
     }
   };
 
+  const inputStyle = (name: string) => {
+    const hasError = !!formErrors[name];
+    const isFocused = !!focusMap[name];
+    return {
+      width: '100%',
+      padding: '14px 16px',
+      backgroundColor: '#f9fafb',
+      fontSize: '15px',
+      color: '#1f2937',
+      borderRadius: '12px',
+      border: hasError ? '1.5px solid #ef4444' : isFocused ? '1.5px solid #d64e38' : '1.5px solid #e5e7eb',
+      boxShadow: hasError ? '0 0 0 3px rgba(239,68,68,0.15)' : isFocused ? '0 0 0 3px rgba(214,78,56,0.15)' : 'none',
+      outline: 'none',
+      transition: 'border-color 0.2s, box-shadow 0.2s',
+      boxSizing: 'border-box' as const,
+    };
+  };
+
+  const labelStyle = {
+    display: 'block' as const,
+    fontSize: '14px',
+    fontWeight: 600,
+    color: '#374151',
+    marginBottom: '6px',
+  };
+
+  const errorTextStyle = {
+    marginTop: '4px',
+    fontSize: '13px',
+    color: '#dc2626',
+  };
+
+  const pageStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+  };
+
+  const containerStyle = {
+    maxWidth: '576px',
+    margin: '0 auto',
+    padding: '40px 24px',
+  };
+
+  const cardStyle = {
+    background: '#fff',
+    borderRadius: '12px',
+    border: '1px solid #f0ebe7',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    padding: '32px',
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
-      <div className="max-w-xl mx-auto">
-        <section className="mb-8">
-          <h1 className="page-title text-2xl md:text-3xl">Seus Dados</h1>
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <div style={{ marginBottom: '40px' }}>
+          <StepIndicator
+            currentStep={2}
+            steps={[t('stepProfessional'), t('stepDateTime'), t('stepYourData')]}
+          />
+        </div>
+
+        <section style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: 0 }}>
+            {t('yourData')}
+          </h1>
         </section>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+          <div style={{
+            marginBottom: '32px',
+            padding: '16px',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            color: '#b91c1c',
+            borderRadius: '12px',
+            fontSize: '14px',
+          }}>
             {error}
           </div>
         )}
 
-        <div className="content-card">
-          <div className="p-3 bg-brand/10 rounded-lg mb-6">
-            <p className="text-sm text-gray-600">Data e Horário Selecionado:</p>
-            <p className="font-semibold text-gray-900">
-              {new Date(selectedDate).toLocaleDateString('pt-BR', {
+        <div style={cardStyle}>
+          {/* Data/hora selecionados */}
+          <div style={{
+            background: 'rgba(214,78,56,0.05)',
+            border: '1px solid rgba(214,78,56,0.1)',
+            borderRadius: '12px',
+            padding: '16px',
+            marginBottom: '32px',
+          }}>
+            <p style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#6b7280',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              margin: '0 0 4px 0',
+            }}>
+              {t('selectedDateTime')}
+            </p>
+            <p style={{ fontWeight: 600, color: '#111827', margin: 0, fontSize: '15px' }}>
+              {new Date(selectedDate).toLocaleDateString(undefined, {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
               })}{' '}
-              às {selectedTime}
+              {t('at')} {selectedTime}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="text"
-              label="Seu Nome *"
-              placeholder="Seu nome completo"
-              {...getFieldProps('clientName')}
-              required
-            />
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('yourName')}</label>
+              <input
+                type="text"
+                placeholder={t('yourNamePlaceholder')}
+                {...getFieldProps('clientName')}
+                onFocus={() => handleFocus('clientName')}
+                onBlur={() => handleBlur('clientName')}
+                style={inputStyle('clientName')}
+                required
+              />
+              {formErrors.clientName && <p style={errorTextStyle}>{formErrors.clientName}</p>}
+            </div>
 
-            <Input
-              type="email"
-              label="Seu Email *"
-              placeholder="seu@email.com"
-              {...getFieldProps('clientEmail')}
-              required
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('yourEmail')}</label>
+              <input
+                type="email"
+                placeholder={t('yourEmailPlaceholder')}
+                {...getFieldProps('clientEmail')}
+                onFocus={() => handleFocus('clientEmail')}
+                onBlur={() => handleBlur('clientEmail')}
+                style={inputStyle('clientEmail')}
+                required
+              />
+              {formErrors.clientEmail && <p style={errorTextStyle}>{formErrors.clientEmail}</p>}
+            </div>
 
-            <Input
-              type="tel"
-              label="Telefone (opcional)"
-              placeholder="(11) 99999-9999"
-              {...getFieldProps('clientPhone')}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('yourPhone')}</label>
+              <input
+                type="tel"
+                placeholder={t('yourPhonePlaceholder')}
+                {...getFieldProps('clientPhone')}
+                onFocus={() => handleFocus('clientPhone')}
+                onBlur={() => handleBlur('clientPhone')}
+                style={inputStyle('clientPhone')}
+              />
+              {formErrors.clientPhone && <p style={errorTextStyle}>{formErrors.clientPhone}</p>}
+            </div>
 
-            <Input
-              type="number"
-              label="Duração (minutos)"
-              value={formData.duration}
-              onChange={(e) => handleChange('duration', parseInt(e.target.value, 10) || 60)}
-              min={5}
-              max={480}
-              required
-              error={formErrors.duration}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('duration')}</label>
+              <input
+                type="number"
+                value={formData.duration}
+                onChange={(e) => handleChange('duration', parseInt(e.target.value, 10) || 60)}
+                onFocus={() => handleFocus('duration')}
+                onBlur={() => handleBlur('duration')}
+                min={5}
+                max={480}
+                style={inputStyle('duration')}
+                required
+              />
+              {formErrors.duration && <p style={errorTextStyle}>{formErrors.duration}</p>}
+            </div>
 
-            <Input
-              type="text"
-              label="Título (opcional)"
-              {...getFieldProps('title')}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('title')}</label>
+              <input
+                type="text"
+                {...getFieldProps('title')}
+                onFocus={() => handleFocus('title')}
+                onBlur={() => handleBlur('title')}
+                style={inputStyle('title')}
+              />
+              {formErrors.title && <p style={errorTextStyle}>{formErrors.title}</p>}
+            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Descrição (opcional)
-              </label>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('description')}</label>
               <textarea
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand ${
-                  formErrors.description ? 'border-red-500' : 'border-gray-300'
-                }`}
                 rows={3}
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Descrição do agendamento"
+                onFocus={() => handleFocus('description')}
+                onBlur={() => handleBlur('description')}
+                placeholder={t('descriptionPlaceholder')}
+                style={{
+                  ...inputStyle('description'),
+                  minHeight: '80px',
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                }}
               />
-              {formErrors.description && (
-                <p className="mt-1 text-sm text-red-600">{formErrors.description}</p>
-              )}
+              {formErrors.description && <p style={errorTextStyle}>{formErrors.description}</p>}
             </div>
 
-            <Input
-              type="text"
-              label="Localização (opcional)"
-              placeholder="Presencial ou Online"
-              {...getFieldProps('location')}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>{t('location')}</label>
+              <input
+                type="text"
+                placeholder={t('locationPlaceholder')}
+                {...getFieldProps('location')}
+                onFocus={() => handleFocus('location')}
+                onBlur={() => handleBlur('location')}
+                style={inputStyle('location')}
+              />
+              {formErrors.location && <p style={errorTextStyle}>{formErrors.location}</p>}
+            </div>
 
-            <div className="flex gap-4 pt-4">
-              <Button type="submit" className="flex-1">
-                Confirmar Agendamento
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => navigate(`/book/${providerId}`)}
-                className="flex-1"
+            <div style={{ display: 'flex', gap: '16px', paddingTop: '24px' }}>
+              <button
+                type="submit"
+                style={{
+                  flex: 1,
+                  padding: '10px 24px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  background: hoverBtn === 'submit' ? '#b83d2a' : '#d64e38',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={() => setHoverBtn('submit')}
+                onMouseLeave={() => setHoverBtn(null)}
               >
-                Voltar
-              </Button>
+                {t('confirmAppointment')}
+              </button>
+              <button
+                type="button"
+                style={{
+                  flex: 1,
+                  padding: '10px 24px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  background: hoverBtn === 'back' ? '#f9fafb' : '#fff',
+                  color: '#374151',
+                  border: '1.5px solid #d1d5db',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={() => setHoverBtn('back')}
+                onMouseLeave={() => setHoverBtn(null)}
+                onClick={() => navigate(`/book/${providerId}`)}
+              >
+                {t('back')}
+              </button>
             </div>
           </form>
         </div>
-        <div className="mt-8 pt-6 text-left">
+
+        {/* Rodapé — Voltar */}
+        <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #f0ebe7', textAlign: 'center' }}>
           <button
             type="button"
             onClick={() => navigate(`/book/${providerId}`)}
-            className="text-base text-gray-600 hover:text-gray-900 underline py-1.5"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '14px',
+              color: '#6b7280',
+              fontWeight: 500,
+              cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#d64e38')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#6b7280')}
           >
-            ← Voltar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {t('back')}
           </button>
         </div>
       </div>

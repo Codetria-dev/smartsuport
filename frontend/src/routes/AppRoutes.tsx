@@ -22,6 +22,9 @@ import Home from '../pages/public/Home';
 import SelectProvider from '../pages/public/SelectProvider';
 import PublicBookAppointment from '../pages/public/PublicBookAppointment';
 import PublicBookForm from '../pages/public/PublicBookForm';
+import Terms from '../pages/public/Terms';
+import Privacy from '../pages/public/Privacy';
+import Support from '../pages/public/Support';
 import Confirmation from '../pages/public/Confirmation';
 import ConsultAppointment from '../pages/public/ConsultAppointment';
 import AdminDashboard from '../pages/admin/Dashboard';
@@ -64,6 +67,10 @@ export function AppRoutes() {
           
           {/* Consulta de agendamento público */}
           <Route path="/consult" element={<PublicLayout><ConsultAppointment /></PublicLayout>} />
+
+          <Route path="/terms" element={<PublicLayout><Terms /></PublicLayout>} />
+          <Route path="/privacy" element={<PublicLayout><Privacy /></PublicLayout>} />
+          <Route path="/support" element={<PublicLayout><Support /></PublicLayout>} />
 
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />

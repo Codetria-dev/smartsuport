@@ -58,6 +58,10 @@ interface EnvConfig {
   SMTP_USER?: string;
   SMTP_PASS?: string;
   SMTP_FROM?: string;
+  /** Se true, força TLS (secure: true). Se omitido, usa porta 465 como padrão TLS. */
+  SMTP_SECURE?: boolean;
+  // Encryption (para dados sensíveis no banco como apiKey do usuário)
+  ENCRYPTION_KEY?: string;
 }
 
 function validateEnv(): EnvConfig {
@@ -103,6 +107,9 @@ function validateEnv(): EnvConfig {
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_FROM: process.env.SMTP_FROM,
+    SMTP_SECURE: process.env.SMTP_SECURE === 'true' ? true : process.env.SMTP_SECURE === 'false' ? false : undefined,
+    // Encryption (opcional - para criptografar chaves de API no banco)
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
   };
 }
 

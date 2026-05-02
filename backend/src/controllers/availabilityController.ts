@@ -91,4 +91,24 @@ export const availabilityController = {
 
     res.json(slots);
   }),
+
+  /**
+   * Cria disponibilidades padrão (Segunda a Sexta, 9h-17h) para o provider logado.
+   * Só cria se ainda não houver nenhuma disponibilidade cadastrada.
+   */
+  seedDefault: asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Não autenticado' });
+    }
+
+    if (req.user.role !== 'PROVIDER' && req.user.role !== 'ADMIN') {
+      return res.status(403).json({ error: 'Apenas providers podem gerenciar disponibilidades' });
+    }
+
+    const availabilities = await availabilityService.seedDefaultAvailabilities(
+      req.user.userId
+    );
+
+    res.json(availabilities);
+  }),
 };

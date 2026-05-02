@@ -46,6 +46,13 @@ router.delete(
   availabilityController.deleteAvailability
 );
 
+// Cria disponibilidades padrão (Segunda a Sexta, 9h-17h)
+router.post(
+  '/seed',
+  requireRole('PROVIDER', 'ADMIN'),
+  availabilityController.seedDefault
+);
+
 // Obtém slots disponíveis (para usuários autenticados)
 router.get(
   '/:providerId/slots',

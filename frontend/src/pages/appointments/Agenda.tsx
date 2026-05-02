@@ -109,6 +109,14 @@ export default function Agenda() {
         {received.length === 0 ? (
           <div className="dashboard-card" style={{ textAlign: 'center', padding: '2rem' }}>
             <p className="dashboard-stat-label">{t('noReceivedYet')}</p>
+            <button
+              type="button"
+              onClick={() => navigate('/availability')}
+              className="btn-dashboard-secondary"
+              style={{ marginTop: '1rem' }}
+            >
+              {t('configureAvailability')}
+            </button>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
@@ -189,6 +197,14 @@ export default function Agenda() {
       {futureOrRecent.length === 0 ? (
         <div className="dashboard-card" style={{ textAlign: 'center', padding: '2rem' }}>
           <p className="dashboard-stat-label">{t('noAppointments')}</p>
+          <button
+            type="button"
+            onClick={() => navigate('/select-provider')}
+            className="btn-dashboard-primary"
+            style={{ marginTop: '1rem' }}
+          >
+            Agendar
+          </button>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -222,8 +238,8 @@ export default function Agenda() {
                       {getStatusLabel(appointment.status)}
                     </span>
                     <p className="dashboard-stat-label" style={{ marginTop: '0.5rem' }}>
-                      <strong>Data:</strong>{' '}
-                      {startDate.toLocaleDateString('pt-BR', {
+                      <strong>{t('date')}:</strong>{' '}
+                      {startDate.toLocaleDateString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
@@ -231,9 +247,9 @@ export default function Agenda() {
                       })}
                     </p>
                     <p className="dashboard-stat-label">
-                      <strong>Horário:</strong>{' '}
-                      {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}{' '}
-                      – {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      <strong>{t('time')}:</strong>{' '}
+                      {startDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}{' '}
+                      – {endDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                     </p>
                     {provider && (
                       <p className="dashboard-stat-label">

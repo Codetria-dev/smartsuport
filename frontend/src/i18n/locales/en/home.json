@@ -1,5 +1,6 @@
 {
   "heroTitle": "Simple, professional online scheduling",
+  "heroBadge": "Smart Support",
   "heroSubtitle": "Let your clients book services in minutes, with no hassle.",
   "heroCtaPrimary": "Book an appointment",
   "heroCtaSecondary": "Create professional account",
@@ -26,5 +27,6 @@
   "ariaProductPreview": "Dashboard preview {{n}}",
   "ariaStatistics": "Statistics",
   "ariaFeatures": "Features",
-  "ariaCallToAction": "Call to action"
+  "ariaCallToAction": "Call to action",
+  "viewDemo": "View demo"
 }
