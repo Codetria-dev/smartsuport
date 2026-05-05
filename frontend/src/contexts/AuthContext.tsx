@@ -62,7 +62,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           storage.clearAll();
         }
       } catch (error) {
-        console.error('Error loading user:', error);
+        const err = error as { response?: { status?: number; data?: unknown }; message?: string };
+        console.error('Error loading user:', err?.response?.status, err?.response?.data || err?.message);
         storage.clearAll();
       } finally {
         setIsLoading(false);

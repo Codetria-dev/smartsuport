@@ -1,90 +1,191 @@
-# SmartSupport Frontend
+# SmartSupport - Frontend
 
-Frontend do sistema de agendamento SaaS construído com React + Vite + TypeScript.
+SaaS scheduling system - Modern and responsive interface for appointment management.
 
-## Tecnologias
+> **Part of the Codetria Portfolio**
+> Project backend: [link to backend repository]
 
-- React 18
-- Vite
-- TypeScript
-- React Router DOM
-- Axios
-- Tailwind CSS (via CDN ou instalar)
+---
 
-## Pré-requisitos
+## Preview
 
-- Node.js 18+
-- npm ou yarn
+![SmartSupport Dashboard](https://via.placeholder.com/800x400?text=SmartSupport+Preview)
 
-## Instalação
+---
 
-1. Instale as dependências:
+## Features
+
+- Complete authentication (Login/Register with JWT)
+- Dashboard with appointment overview
+- Appointment CRUD (create, edit, cancel)
+- Filters by date/client/service
+- User profile with data editing
+- Responsive - works on mobile and desktop
+- Automatic refresh token (persistent session)
+
+---
+
+## Tech Stack
+
+| Technology     | Version | Purpose                |
+| -------------- | ------- | ---------------------- |
+| React          | 18.2    | Declarative UI         |
+| TypeScript     | 5.x     | Static typing          |
+| Vite           | 5.x     | Fast build tool        |
+| React Router   | 6.x     | SPA navigation         |
+| Axios          | 1.x     | HTTP requests          |
+| Tailwind CSS   | 4.x     | Utility-first styling  |
+
+---
+
+## Prerequisites
+
+- Node.js 18+ (recommended v20 LTS)
+- npm or yarn or pnpm
+- Backend running (SmartSupport API)
+
+---
+
+## Installation and Setup
+
 ```bash
+# 1. Clone the repository
+git clone https://github.com/your-username/smartsupport-frontend.git
+
+# 2. Enter the folder
+cd smartsupport-frontend
+
+# 3. Install dependencies
 npm install
-```
 
-2. Configure as variáveis de ambiente:
-```bash
+# 4. Configure environment variables
 cp .env.example .env
-# Edite o .env com a URL da API
-```
+# Edit .env with your API URL
+# Example: VITE_API_URL=http://localhost:3333
 
-3. Inicie o servidor de desenvolvimento:
-```bash
+# 5. Start development server
 npm run dev
 ```
 
-O servidor estará rodando em `http://localhost:5173`
+The app will be available at `http://localhost:5173`.
 
-## Estrutura do Projeto
+---
+
+## Authentication System (Technical Details)
+
+The frontend implements stateless authentication with JWT + Context API:
+
+```
+Login -> API returns { access_token, refresh_token }
+  |
+  v
+Store tokens in localStorage
+  |
+  v
+Axios interceptor adds header: Authorization: Bearer {token}
+  |
+  v
+Token expires -> automatic silent refresh
+  |
+  v
+Refresh fails -> user is automatically logged out
+```
+
+**Key files:**
+- `src/contexts/AuthContext.tsx` - Global state management
+- `src/services/api.ts` - Axios interceptor
+- `src/utils/refreshToken.ts` - Renewal logic
+
+---
+
+## Folder Structure
 
 ```
 frontend/
 ├── src/
-│   ├── components/     # Componentes reutilizáveis
-│   ├── contexts/       # Context API (AuthContext)
-│   ├── pages/          # Páginas da aplicação
-│   ├── routes/         # Configuração de rotas
-│   ├── services/       # Serviços de API
-│   ├── types/          # Tipos TypeScript
-│   └── utils/          # Funções utilitárias
+│   ├── components/       # Reusable components (Button, Input, Modal)
+│   ├── contexts/         # React contexts (AuthContext main)
+│   ├── pages/            # Full pages (Login, Dashboard, Profile)
+│   ├── routes/           # Public/private routes with guards
+│   ├── services/         # API calls (appointments, user)
+│   ├── types/            # Global TypeScript interfaces
+│   └── utils/            # Helper functions (formatting, validation)
+├── .env.example          # Environment variables template
+├── index.html
+├── package.json
+└── vite.config.ts
 ```
 
-## Autenticação
+---
 
-O sistema usa Context API para gerenciar autenticação:
-- Tokens armazenados no localStorage
-- Interceptor do Axios adiciona token automaticamente
-- Refresh token automático em caso de expiração
+## Available Scripts
 
-## Scripts Disponíveis
-
-- `npm run dev` - Inicia servidor de desenvolvimento
-- `npm run build` - Compila para produção
-- `npm run preview` - Preview da build de produção
-
-## Nota sobre Tailwind CSS
-
-Este projeto usa classes Tailwind CSS. Para funcionar completamente, você precisa:
-
-1. Instalar Tailwind CSS:
 ```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+npm run dev      # Development with hot-reload
+npm run build    # Production build (/dist folder)
+npm run preview  # Preview production build locally
+npm run lint     # Run ESLint on code
 ```
 
-2. Configurar `tailwind.config.js`:
-```javascript
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+---
+
+## Tailwind CSS Customization
+
+The project uses Tailwind CSS v4 via PostCSS. Configure as follows:
+
+```bash
+npm install -D tailwindcss @tailwindcss/postcss postcss
+```
+
+`tailwind.css` file:
+```css
+@import "tailwindcss";
+@theme {
+  --color-brand: #d64e38;
 }
 ```
 
-Ou usar o CDN do Tailwind no `index.html` temporariamente.
+---
+
+## Environment Variables
+
+| Variable        | Example                    | Required |
+| --------------- | -------------------------- | -------- |
+| VITE_API_URL    | http://localhost:3333      | Yes      |
+| VITE_APP_NAME   | SmartSupport               | Optional |
+
+---
+
+## Responsiveness
+
+The layout was developed with Mobile First approach:
+
+| Breakpoint  | Width        |
+| ----------- | ------------ |
+| Mobile      | < 640px      |
+| Tablet      | >= 768px     |
+| Desktop     | >= 1024px    |
+
+Tested on: Chrome, Firefox, Safari, Edge (mobile and desktop).
+
+---
+
+## Future Improvements (Roadmap)
+
+- Dark mode
+- PWA for mobile installation
+- Appointment charts (Recharts)
+- Real-time notifications (WebSocket)
+
+---
+
+## License
+
+This project is part of the Codetria Portfolio - educational and demonstrational use.
+
+---
+
+## Contact
+
+Developed by [Your Name]
+[Your LinkedIn] | [Your GitHub] | [Your Portfolio]

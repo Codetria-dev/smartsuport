@@ -80,7 +80,8 @@ export default function AdminDashboard() {
         setLoading(false);
       }, 500);
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+      const err = error as { response?: { status?: number; data?: unknown }; message?: string };
+      console.error('Erro ao carregar dados do admin:', err?.response?.status, err?.response?.data || err?.message);
       setLoading(false);
     }
   };

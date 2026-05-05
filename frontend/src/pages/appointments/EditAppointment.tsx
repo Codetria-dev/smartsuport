@@ -113,7 +113,7 @@ export default function EditAppointment() {
       );
       setTimeSlots(slots);
     } catch (err: any) {
-      console.error(t('appointments:loadAppointmentError'), err);
+      console.error('Erro ao carregar horarios do appointment:', err?.response?.status, err?.response?.data || err?.message);
     } finally {
       setLoadingSlots(false);
     }

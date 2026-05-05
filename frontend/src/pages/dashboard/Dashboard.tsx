@@ -39,7 +39,8 @@ export default function Dashboard() {
       const appointments = await appointmentService.getMyAppointments();
       setAgendamentos(appointments);
     } catch (error) {
-      console.error('Erro ao carregar agendamentos:', error);
+      const err = error as { response?: { status?: number; data?: unknown }; message?: string };
+      console.error('Erro ao carregar agendamentos:', err?.response?.status, err?.response?.data || err?.message);
       setAgendamentos([]);
     } finally {
       setLoading(false);
