@@ -68,7 +68,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    debug: false,
+    debug: true,
     showSupportNotice: false,
     fallbackLng: 'pt',
     defaultNS: 'common',
