@@ -14,6 +14,19 @@ function stripTrailingSlash(url: string): string {
   return url.trim().replace(/\/+$/, '');
 }
 
+/**
+ * Remove surrounding double quotes from env values.
+ * Segurança: Railway/Vercel podem receber valores colados do .env com aspas.
+ */
+function stripQuotes(value: string | undefined): string | undefined {
+  if (value == null) return value;
+  const trimmed = value.trim();
+  if (trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+}
+
 /** Junta CORS_ORIGIN com FRONTEND_URL para não esquecer o domínio de produção no Railway. */
 function buildCorsOrigins(): string[] {
   const fromList = parseCorsOrigins(
@@ -85,10 +98,10 @@ function validateEnv(): EnvConfig {
   return {
     NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: parseInt(process.env.PORT || '3000', 10),
-    DATABASE_URL: process.env.DATABASE_URL!,
-    JWT_SECRET: process.env.JWT_SECRET!,
-    JWT_ACCESS_TOKEN_EXPIRES_IN: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN!,
-    JWT_REFRESH_TOKEN_EXPIRES_IN: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN!,
+    DATABASE_URL: stripQuotes(process.env.DATABASE_URL)!,
+    JWT_SECRET: stripQuotes(process.env.JWT_SECRET)!,
+    JWT_ACCESS_TOKEN_EXPIRES_IN: stripQuotes(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN)!,
+    JWT_REFRESH_TOKEN_EXPIRES_IN: stripQuotes(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN)!,
     CORS_ORIGIN: buildCorsOrigins(),
     CORS_ALLOW_VERCEL_PREVIEWS:
       process.env.CORS_ALLOW_VERCEL_PREVIEWS === 'true' ||

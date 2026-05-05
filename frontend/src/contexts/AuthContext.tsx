@@ -100,14 +100,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (data: RegisterData): Promise<void> => {
     try {
       storage.clearDemo();
+      console.log('[Auth] Enviando registro:', { ...data, password: '***' });
       const response = await api.post<AuthResponse>('/api/auth/register', data);
+      console.log('[Auth] Registro resposta:', response.status, response.data);
       const { user: u, accessToken, refreshToken } = response.data;
+
+      if (!u || !accessToken || !refreshToken) {
+        console.error('[Auth] Resposta incompleta do backend:', response.data);
+        throw new Error('Resposta invalida do servidor');
+      }
 
       storage.setTokens(accessToken, refreshToken);
       storage.setUser(u);
       setUser(u);
+      console.log('[Auth] Registro concluido, usuario:', u.email);
     } catch (error: any) {
-      const message = error.response?.data?.error || 'Erro ao registrar';
+      const status = error.response?.status;
+      const data = error.response?.data;
+      console.error('[Auth] Erro no registro:', { status, data, message: error.message });
+      const message = data?.error || 'Erro ao registrar';
       throw new Error(message);
     }
   };
