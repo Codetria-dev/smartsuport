@@ -11,9 +11,6 @@ import Loading from '../../components/ui/Loading';
 
 const DURATION_OPTIONS = [30, 45, 60, 90, 120];
 
-const inputClass =
-  'w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent';
-
 export default function ClientBookAppointment() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -85,6 +82,32 @@ export default function ClientBookAppointment() {
 
   const today = new Date().toISOString().split('T')[0];
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 12px',
+    fontSize: '14px',
+    border: '1px solid #e5e7eb',
+    borderRadius: '12px',
+    marginTop: '4px',
+    boxSizing: 'border-box',
+    outline: 'none',
+    background: '#fff',
+    color: '#111827',
+  };
+
+  const btnPrimaryStyle: React.CSSProperties = {
+    minHeight: '2.75rem',
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 500,
+    borderRadius: '12px',
+    background: '#d64e38',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'background 0.15s',
+  };
+
   if (loadingClient || !id) {
     return <Loading fullScreen message={t('loading')} />;
   }
@@ -92,69 +115,95 @@ export default function ClientBookAppointment() {
   if (!client) return null;
 
   return (
-    <div className="max-w-xl mx-auto mt-12 px-6">
+    <div style={{ maxWidth: '576px', margin: '48px auto 0', padding: '0 24px' }}>
       <Link
         to={`/clients/${id}`}
-        className="text-sm text-gray-500 hover:text-gray-700 mb-4 block"
+        style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'none', display: 'block', marginBottom: '16px' }}
       >
         {t('backToClient')}
       </Link>
 
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-8">
-        <h1 className="text-xl font-semibold text-gray-900">
+      <div style={{
+        background: '#fff',
+        borderRadius: '16px',
+        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+        border: '1px solid #f0ebe7',
+        padding: '32px',
+      }}>
+        <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#111827', margin: 0 }}>
           {t('scheduleTitle')}
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
           {t('scheduleSubtitle')}
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5 mt-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">{t('date')}</label>
+        <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151' }}>{t('date')}</label>
             <input
               type="date"
               min={today}
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className={inputClass}
+              style={{
+                ...inputStyle,
+                borderColor: selectedDate ? '#d64e38' : '#e5e7eb',
+              }}
+              onFocus={(e) => { e.target.style.borderColor = '#d64e38'; e.target.style.boxShadow = '0 0 0 3px rgba(214,78,56,0.15)'; }}
+              onBlur={(e) => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
               required
             />
           </div>
 
           {selectedDate && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700">{t('time')}</label>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151' }}>{t('time')}</label>
               {loadingSlots ? (
-                <p className="text-sm text-gray-500 mt-1">{t('loadingSlots')}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>{t('loadingSlots')}</p>
               ) : availableSlots.length === 0 ? (
-                <p className="text-sm text-gray-500 mt-1">{t('noSlots')}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>{t('noSlots')}</p>
               ) : (
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {availableSlots.map((slot) => (
-                    <button
-                      key={`${slot.date}-${slot.time}`}
-                      type="button"
-                      onClick={() => setSelectedTime(slot.time)}
-                      className={`min-h-[2.5rem] px-3 py-2.5 rounded-lg text-base font-medium border transition-colors ${
-                        selectedTime === slot.time
-                          ? 'bg-orange-500 text-white border-orange-500'
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {slot.time}
-                    </button>
-                  ))}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+                  {availableSlots.map((slot) => {
+                    const isSelected = selectedTime === slot.time;
+                    return (
+                      <button
+                        key={`${slot.date}-${slot.time}`}
+                        type="button"
+                        onClick={() => setSelectedTime(slot.time)}
+                        style={{
+                          minHeight: '2.5rem',
+                          padding: '8px 12px',
+                          fontSize: '14px',
+                          fontWeight: 500,
+                          borderRadius: '12px',
+                          border: isSelected ? '1px solid #d64e38' : '1px solid #e5e7eb',
+                          background: isSelected ? '#d64e38' : '#fff',
+                          color: isSelected ? '#fff' : '#374151',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s',
+                        }}
+                        onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.background = '#f9fafb'; } }}
+                        onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.background = '#fff'; } }}
+                      >
+                        {slot.time}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">{t('duration')}</label>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151' }}>{t('duration')}</label>
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className={inputClass}
+              style={{
+                ...inputStyle,
+                cursor: 'pointer',
+              }}
             >
               {DURATION_OPTIONS.map((d) => (
                 <option key={d} value={d}>
@@ -164,17 +213,37 @@ export default function ClientBookAppointment() {
             </select>
           </div>
 
-          <div className="flex gap-3 mt-6">
+          <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
             <button
               type="submit"
               disabled={!selectedDate || !selectedTime || submitting}
-              className="min-h-[2.75rem] px-5 py-2.5 rounded-lg text-base bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                ...btnPrimaryStyle,
+                opacity: (!selectedDate || !selectedTime || submitting) ? 0.5 : 1,
+                cursor: (!selectedDate || !selectedTime || submitting) ? 'not-allowed' : 'pointer',
+              }}
+              onMouseEnter={(e) => { if (selectedDate && selectedTime && !submitting) e.currentTarget.style.filter = 'brightness(0.9)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
             >
               {submitting ? t('saving') : t('createAppointment')}
             </button>
             <Link
               to={`/clients/${id}`}
-              className="inline-flex items-center justify-center min-h-[2.75rem] px-5 py-2.5 rounded-lg text-base border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '2.75rem',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: 500,
+                borderRadius: '12px',
+                border: '1px solid #e5e7eb',
+                color: '#374151',
+                background: '#fff',
+                textDecoration: 'none',
+                transition: 'background 0.15s',
+              }}
             >
               {t('cancel')}
             </Link>

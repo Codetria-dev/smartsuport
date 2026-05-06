@@ -68,50 +68,91 @@ export default function ClientDetail() {
     return null;
   }
 
+  const btnPrimaryStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '2.75rem',
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 500,
+    borderRadius: '12px',
+    background: '#d64e38',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    transition: 'background 0.15s',
+  };
+
+  const btnSecondaryStyle: React.CSSProperties = {
+    minHeight: '2.75rem',
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 500,
+    borderRadius: '12px',
+    border: '1px solid #e5e7eb',
+    color: '#b91c1c',
+    background: '#fff',
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  };
+
   return (
-    <div className="max-w-3xl mx-auto mt-10 px-6">
+    <div style={{ maxWidth: '768px', margin: '40px auto 0', padding: '0 24px' }}>
       <Link
         to="/clients"
-        className="text-sm text-gray-500 hover:text-gray-700 mb-4 block"
+        style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'none', display: 'block', marginBottom: '16px' }}
       >
         {t('backToClients')}
       </Link>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-2xl font-semibold text-gray-900">
+      <div style={{
+        background: '#fff',
+        borderRadius: '16px',
+        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+        border: '1px solid #f0ebe7',
+        padding: '32px',
+      }}>
+        <h1 style={{ fontSize: '22px', fontWeight: 600, color: '#111827', margin: 0 }}>
           {t('detailTitle')}
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
           {t('detailSubtitle')}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '24px',
+          marginTop: '24px',
+        }}>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wide">{t('name')}</p>
-            <p className="text-base font-medium text-gray-900 mt-1">{client.name}</p>
+            <p style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{t('name')}</p>
+            <p style={{ fontSize: '15px', fontWeight: 500, color: '#111827', margin: '4px 0 0 0' }}>{client.name}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wide">{t('email')}</p>
-            <p className="text-base font-medium text-gray-900 mt-1">{client.email}</p>
+            <p style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{t('email')}</p>
+            <p style={{ fontSize: '15px', fontWeight: 500, color: '#111827', margin: '4px 0 0 0' }}>{client.email}</p>
           </div>
           {client.phone && (
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">{t('phone')}</p>
-              <p className="text-base font-medium text-gray-900 mt-1">{client.phone}</p>
+              <p style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{t('phone')}</p>
+              <p style={{ fontSize: '15px', fontWeight: 500, color: '#111827', margin: '4px 0 0 0' }}>{client.phone}</p>
             </div>
           )}
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wide">{t('registeredLabel')}</p>
-            <p className="text-base font-medium text-gray-900 mt-1">
+            <p style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{t('registeredLabel')}</p>
+            <p style={{ fontSize: '15px', fontWeight: 500, color: '#111827', margin: '4px 0 0 0' }}>
               {formatRegistered(client.createdAt)}
             </p>
           </div>
         </div>
 
-        <div className="flex gap-3 mt-8">
+        <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
           <Link
             to={`/clients/${id}/agendar`}
-            className="inline-flex items-center justify-center min-h-[2.75rem] px-5 py-2.5 text-base rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors"
+            style={btnPrimaryStyle}
           >
             {t('scheduleAppointment')}
           </Link>
@@ -119,7 +160,12 @@ export default function ClientDetail() {
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="min-h-[2.75rem] px-5 py-2.5 text-base rounded-lg border border-gray-300 text-red-600 font-medium hover:bg-red-50 transition-colors disabled:opacity-50"
+            style={{
+              ...btnSecondaryStyle,
+              opacity: deleting ? 0.5 : 1,
+            }}
+            onMouseEnter={(e) => { if (!deleting) e.currentTarget.style.background = '#fef2f2'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#fff'; }}
           >
             {deleting ? t('deleting') : t('deleteClient')}
           </button>
