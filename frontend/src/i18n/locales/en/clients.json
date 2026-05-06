@@ -51,5 +51,7 @@
   "phonePlaceholder": "(00) 00000-0000",
   "submitButton": "Register client",
   "successMessage": "Client registered successfully. They can now log in.",
-  "errorMessage": "Error registering client."
+  "errorMessage": "Error registering client.",
+  "personalInfo": "Personal Information",
+  "requiredFields": "Required fields"
 }

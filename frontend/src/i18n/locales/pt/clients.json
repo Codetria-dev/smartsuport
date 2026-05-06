@@ -51,5 +51,7 @@
   "phonePlaceholder": "(00) 00000-0000",
   "submitButton": "Cadastrar cliente",
   "successMessage": "Cliente cadastrado com sucesso. Ele já pode fazer login.",
-  "errorMessage": "Erro ao cadastrar cliente."
+  "errorMessage": "Erro ao cadastrar cliente.",
+  "personalInfo": "Informações pessoais",
+  "requiredFields": "Campos obrigatórios"
 }

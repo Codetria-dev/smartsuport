@@ -106,7 +106,7 @@ export default function RegisterClient() {
           <form onSubmit={handleSubmit} noValidate>
             <div style={{ padding: '32px 40px' }}>
               <h2 style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center', marginBottom: '32px', marginTop: 0 }}>
-                Informações pessoais
+                {t('clients:personalInfo')}
               </h2>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', maxWidth: '576px', margin: '0 auto' }}>
@@ -175,7 +175,7 @@ export default function RegisterClient() {
             {/* Footer */}
             <div style={{ padding: '20px 40px', backgroundColor: 'rgba(249, 250, 251, 0.8)', borderTop: '1px solid #f0ebe7', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
               <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0 }}>
-                <span style={{ color: '#f87171' }}>*</span> Campos obrigatórios
+                <span style={{ color: '#f87171' }}>*</span> {t('clients:requiredFields')}
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <button
