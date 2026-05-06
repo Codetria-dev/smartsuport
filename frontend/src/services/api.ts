@@ -82,7 +82,7 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (refreshError: unknown) {
-        const err = refreshError as { response?: { data?: unknown }; message?: string };
+        const err = refreshError as { response?: { data?: unknown; status?: number }; message?: string };
         console.error('Refresh token falhou - redirecionando para login. Status:', err?.response?.status, 'Detalhes:', err?.response?.data || err?.message);
         storage.clearAll();
         return Promise.reject(refreshError);
