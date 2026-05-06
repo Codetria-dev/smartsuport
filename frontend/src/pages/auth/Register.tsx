@@ -57,63 +57,102 @@ export default function Register() {
     }
   };
 
+  const containerStyle: React.CSSProperties = {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+    padding: '24px 16px',
+  };
+
+  const cardStyle: React.CSSProperties = {
+    width: '100%',
+    maxWidth: '420px',
+    background: '#fff',
+    borderRadius: '16px',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    border: '1px solid #f0ebe7',
+    padding: '40px 32px',
+  };
+
+  const brandStyle: React.CSSProperties = {
+    textAlign: 'center',
+    marginBottom: '32px',
+  };
+
   return (
-    <div className="saas-layout">
-      <section className="saas-header">
-        <div className="mb-6">
-          <span className="text-2xl font-bold tracking-tight text-gray-900">Smart</span>
-          <span className="text-2xl font-bold tracking-tight text-brand">Support</span>
+    <div style={containerStyle}>
+      <div style={cardStyle}>
+        <div style={brandStyle}>
+          <div style={{ marginBottom: '16px' }}>
+            <span style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.025em', color: '#111827' }}>Smart</span>
+            <span style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.025em', color: '#d64e38' }}>Support</span>
+          </div>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0', letterSpacing: '-0.025em' }}>
+            {t('auth:register')}
+          </h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+            {t('auth:registerSubtitle')}
+          </p>
         </div>
-        <h1 className="saas-title">{t('auth:register')}</h1>
-        <p className="saas-subtitle">{t('auth:registerSubtitle')}</p>
-      </section>
-      <div className="saas-card">
+
         <form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            label={t('auth:fullName')}
-            placeholder={t('auth:fullNamePlaceholder')}
-            {...getFieldProps('name')}
-            required
-            autoComplete="name"
-          />
+          <div style={{ marginBottom: '20px' }}>
+            <Input
+              type="text"
+              label={t('auth:fullName')}
+              placeholder={t('auth:fullNamePlaceholder')}
+              {...getFieldProps('name')}
+              required
+              autoComplete="name"
+            />
+          </div>
 
-          <Input
-            type="email"
-            label={t('auth:email')}
-            placeholder={t('auth:emailPlaceholder')}
-            {...getFieldProps('email')}
-            required
-            autoComplete="email"
-          />
+          <div style={{ marginBottom: '20px' }}>
+            <Input
+              type="email"
+              label={t('auth:email')}
+              placeholder={t('auth:emailPlaceholder')}
+              {...getFieldProps('email')}
+              required
+              autoComplete="email"
+            />
+          </div>
 
-          <Input
-            type="password"
-            label={t('auth:password')}
-            placeholder={t('auth:passwordMinPlaceholder')}
-            {...getFieldProps('password')}
-            required
-            autoComplete="new-password"
-            minLength={6}
-          />
+          <div style={{ marginBottom: '20px' }}>
+            <Input
+              type="password"
+              label={t('auth:password')}
+              placeholder={t('auth:passwordMinPlaceholder')}
+              {...getFieldProps('password')}
+              required
+              autoComplete="new-password"
+              minLength={6}
+            />
+          </div>
 
-          <Input
-            type="tel"
-            label={t('auth:phoneOptional')}
-            placeholder={t('auth:phonePlaceholder')}
-            {...getFieldProps('phone')}
-            autoComplete="tel"
-          />
+          <div style={{ marginBottom: '24px' }}>
+            <Input
+              type="tel"
+              label={t('auth:phoneOptional')}
+              placeholder={t('auth:phonePlaceholder')}
+              {...getFieldProps('phone')}
+              autoComplete="tel"
+            />
+          </div>
 
           <Button type="submit" isLoading={isLoading} className="w-full">
             {t('auth:registerButton')}
           </Button>
         </form>
 
-        <div className="saas-footer">
-          <p>
+        <div style={{ textAlign: 'center', marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #f0ebe7' }}>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
             {t('auth:hasAccount')}{' '}
-            <Link to="/login">{t('auth:doLogin')}</Link>
+            <Link to="/login" style={{ fontSize: '14px', fontWeight: 500, color: '#d64e38', textDecoration: 'none' }}>
+              {t('auth:doLogin')}
+            </Link>
           </p>
         </div>
       </div>

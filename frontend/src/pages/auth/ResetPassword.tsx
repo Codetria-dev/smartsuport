@@ -5,6 +5,7 @@ import { authService } from '../../services/authService';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+
 export default function ResetPassword() {
   const { t } = useTranslation('auth');
   const [searchParams] = useSearchParams();
@@ -65,18 +66,58 @@ export default function ResetPassword() {
     }
   };
 
+  const containerStyle: React.CSSProperties = {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+    padding: '24px 16px',
+  };
+
+  const cardStyle: React.CSSProperties = {
+    width: '100%',
+    maxWidth: '420px',
+    background: '#fff',
+    borderRadius: '16px',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    border: '1px solid #f0ebe7',
+    padding: '40px 32px',
+    textAlign: 'center' as const,
+  };
+
+  const alertErrorStyle: React.CSSProperties = {
+    padding: '16px',
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    color: '#b91c1c',
+    borderRadius: '12px',
+    fontSize: '14px',
+    textAlign: 'left' as const,
+  };
+
+  const alertSuccessStyle: React.CSSProperties = {
+    padding: '16px',
+    background: '#f0fdf4',
+    border: '1px solid #bbf7d0',
+    color: '#15803d',
+    borderRadius: '12px',
+    marginBottom: '24px',
+    textAlign: 'left' as const,
+  };
+
   if (!token) {
     return (
-      <div className="saas-layout">
-        <div className="saas-card">
-          <div className="text-center">
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-              <p className="font-medium">{t('invalidToken')}</p>
-              <p className="mt-2">{t('invalidTokenDetail')}</p>
-            </div>
-            <div className="saas-footer" style={{ marginTop: 0 }}>
-              <Link to="/forgot-password">{t('requestNewLink')}</Link>
-            </div>
+      <div style={containerStyle}>
+        <div style={cardStyle}>
+          <div style={alertErrorStyle}>
+            <p style={{ fontWeight: 500, margin: 0 }}>{t('invalidToken')}</p>
+            <p style={{ margin: '8px 0 0 0' }}>{t('invalidTokenDetail')}</p>
+          </div>
+          <div style={{ marginTop: '20px' }}>
+            <Link to="/forgot-password" style={{ fontSize: '14px', fontWeight: 500, color: '#d64e38', textDecoration: 'none' }}>
+              {t('requestNewLink')}
+            </Link>
           </div>
         </div>
       </div>
@@ -85,16 +126,16 @@ export default function ResetPassword() {
 
   if (success) {
     return (
-      <div className="saas-layout">
-        <div className="saas-card">
-          <div className="text-center">
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
-              <p className="font-medium">{t('passwordResetSuccess')}</p>
-              <p className="mt-2">{t('redirectToLogin')}</p>
-            </div>
-            <div className="saas-footer" style={{ marginTop: 0 }}>
-              <Link to="/login">{t('goToLoginNow')}</Link>
-            </div>
+      <div style={containerStyle}>
+        <div style={cardStyle}>
+          <div style={alertSuccessStyle}>
+            <p style={{ fontWeight: 500, margin: 0 }}>{t('passwordResetSuccess')}</p>
+            <p style={{ margin: '8px 0 0 0' }}>{t('redirectToLogin')}</p>
+          </div>
+          <div>
+            <Link to="/login" style={{ fontSize: '14px', fontWeight: 500, color: '#d64e38', textDecoration: 'none' }}>
+              {t('goToLoginNow')}
+            </Link>
           </div>
         </div>
       </div>
@@ -102,49 +143,60 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="saas-layout">
-      <section className="saas-header">
-        <h1 className="saas-title">{t('resetPasswordTitle')}</h1>
-        <p className="saas-subtitle">{t('resetPasswordSubtitleShort')}</p>
-      </section>
-      <div className="saas-card">
+    <div style={containerStyle}>
+      <div style={cardStyle}>
+        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0', letterSpacing: '-0.025em' }}>
+            {t('resetPasswordTitle')}
+          </h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+            {t('resetPasswordSubtitleShort')}
+          </p>
+        </div>
+
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+          <div style={{ ...alertErrorStyle, marginBottom: '20px' }}>
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <Input
-            type="password"
-            label={t('newPassword')}
-            placeholder={t('passwordMinPlaceholder')}
-            {...getFieldProps('password')}
-            required
-            autoComplete="new-password"
-            minLength={6}
-          />
+          <div style={{ marginBottom: '20px', textAlign: 'left' }}>
+            <Input
+              type="password"
+              label={t('newPassword')}
+              placeholder={t('passwordMinPlaceholder')}
+              {...getFieldProps('password')}
+              required
+              autoComplete="new-password"
+              minLength={6}
+            />
+          </div>
 
-          <Input
-            type="password"
-            label={t('confirmNewPassword')}
-            placeholder={t('confirmPasswordPlaceholder')}
-            value={values.confirmPassword}
-            onChange={(e) => handleChange('confirmPassword', e.target.value)}
-            onBlur={() => handleBlur('confirmPassword')}
-            error={touched.confirmPassword && errors.confirmPassword ? t('passwordsDontMatch') : undefined}
-            required
-            autoComplete="new-password"
-            minLength={6}
-          />
+          <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+            <Input
+              type="password"
+              label={t('confirmNewPassword')}
+              placeholder={t('confirmPasswordPlaceholder')}
+              value={values.confirmPassword}
+              onChange={(e) => handleChange('confirmPassword', e.target.value)}
+              onBlur={() => handleBlur('confirmPassword')}
+              error={touched.confirmPassword && errors.confirmPassword ? t('passwordsDontMatch') : undefined}
+              required
+              autoComplete="new-password"
+              minLength={6}
+            />
+          </div>
 
           <Button type="submit" isLoading={isLoading} className="w-full">
             {t('resetPassword')}
           </Button>
         </form>
 
-        <div className="saas-footer">
-          <Link to="/login">{t('backToLoginLink')}</Link>
+        <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #f0ebe7' }}>
+          <Link to="/login" style={{ fontSize: '14px', fontWeight: 500, color: '#d64e38', textDecoration: 'none' }}>
+            {t('backToLoginLink')}
+          </Link>
         </div>
       </div>
     </div>

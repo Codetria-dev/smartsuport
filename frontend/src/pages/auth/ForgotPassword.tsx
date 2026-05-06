@@ -5,6 +5,7 @@ import { authService } from '../../services/authService';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+
 export default function ForgotPassword() {
   const { t } = useTranslation(['common', 'auth']);
   const [success, setSuccess] = useState(false);
@@ -41,53 +42,101 @@ export default function ForgotPassword() {
     }
   };
 
+  const containerStyle: React.CSSProperties = {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(to bottom, #fef6f2, #f9fafb)',
+    padding: '24px 16px',
+  };
+
+  const cardStyle: React.CSSProperties = {
+    width: '100%',
+    maxWidth: '420px',
+    background: '#fff',
+    borderRadius: '16px',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08)',
+    border: '1px solid #f0ebe7',
+    padding: '40px 32px',
+    textAlign: 'center',
+  };
+
+  const alertErrorStyle: React.CSSProperties = {
+    padding: '12px 16px',
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    color: '#b91c1c',
+    borderRadius: '12px',
+    fontSize: '14px',
+    marginBottom: '20px',
+    textAlign: 'left',
+  };
+
+  const alertSuccessStyle: React.CSSProperties = {
+    padding: '16px',
+    background: '#f0fdf4',
+    border: '1px solid #bbf7d0',
+    color: '#15803d',
+    borderRadius: '12px',
+    marginBottom: '24px',
+    textAlign: 'left',
+  };
+
   return (
-    <div className="saas-layout">
-      <section className="saas-header">
-        <h1 className="saas-title">{t('auth:recoverPassword')}</h1>
-        <p className="saas-subtitle">{t('auth:recoverPasswordSubtitle')}</p>
-      </section>
-      <div className="saas-card">
+    <div style={containerStyle}>
+      <div style={cardStyle}>
+        <div style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0', letterSpacing: '-0.025em' }}>
+            {t('auth:recoverPassword')}
+          </h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+            {t('auth:recoverPasswordSubtitle')}
+          </p>
+        </div>
+
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+          <div style={alertErrorStyle}>
             {error}
           </div>
         )}
 
         {success ? (
-          <div className="text-center">
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-              <p className="font-medium mb-2">{t('auth:emailSentSuccess')}</p>
-              <p className="text-sm">
-                {t('auth:emailSentDetail')}
-              </p>
+          <>
+            <div style={alertSuccessStyle}>
+              <p style={{ fontWeight: 500, marginBottom: '8px', margin: '0 0 8px 0' }}>{t('auth:emailSentSuccess')}</p>
+              <p style={{ fontSize: '14px', margin: 0 }}>{t('auth:emailSentDetail')}</p>
             </div>
             <Link
               to="/login"
-              className="text-brand-darker hover:text-brand-dark font-medium text-sm"
+              style={{ fontSize: '14px', fontWeight: 500, color: '#b83d2a', textDecoration: 'none' }}
             >
               {t('auth:backToLoginLink')}
             </Link>
-          </div>
+          </>
         ) : (
           <>
             <form onSubmit={handleSubmit}>
-              <Input
-                type="email"
-                label={t('auth:email')}
-                placeholder={t('auth:emailPlaceholder')}
-                {...getFieldProps('email')}
-                required
-                autoComplete="email"
-              />
+              <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+                <Input
+                  type="email"
+                  label={t('auth:email')}
+                  placeholder={t('auth:emailPlaceholder')}
+                  {...getFieldProps('email')}
+                  required
+                  autoComplete="email"
+                />
+              </div>
 
               <Button type="submit" isLoading={isLoading} className="w-full">
                 {t('auth:sendInstructions')}
               </Button>
             </form>
 
-            <div className="saas-footer saas-footer-stacked">
-              <Link to="/login">{t('auth:backToLoginLink')}</Link>
+            <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #f0ebe7' }}>
+              <Link to="/login" style={{ fontSize: '14px', fontWeight: 500, color: '#d64e38', textDecoration: 'none' }}>
+                {t('auth:backToLoginLink')}
+              </Link>
             </div>
           </>
         )}
